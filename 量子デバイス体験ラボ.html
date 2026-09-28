@@ -1,0 +1,3038 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>量子デバイス体験ラボ｜電子を運ぶ・守る・読み出す</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --wafer:#e4e3ec; --panel:#f6f5fa; --panel2:#ecebf3; --sub:#d7d5e4;
+  --ink:#1b1d2e; --ink2:#474a62; --muted:#7c7e95; --line:#cfcddd;
+  --gate:#b3842a; --gate2:#e3c577; --e:#c92a72; --spin:#2a63c9; --ok:#17835a; --bad:#c2410c; --hanko:#d7263d;
+  --chipA:#d9d5ea; --chipB:#cdd9e7; --chipC:#e6d8e1;
+  --font-display:"Dela Gothic One","Hiragino Sans","Yu Gothic",sans-serif;
+  --font-body:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",system-ui,sans-serif;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --wafer:#13141d; --panel:#1c1d2a; --panel2:#242636; --sub:#2d2f43;
+    --ink:#ecebf5; --ink2:#b9bacd; --muted:#8a8ca4; --line:#34364c;
+    --gate:#d6ab52; --gate2:#8c6b25; --e:#ff5c9e; --spin:#6f9dff; --ok:#3fcf8f; --bad:#ff7d4a; --hanko:#ff6b78;
+    --chipA:#22233a; --chipB:#1b2536; --chipC:#2a1f2e;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --wafer:#13141d; --panel:#1c1d2a; --panel2:#242636; --sub:#2d2f43;
+  --ink:#ecebf5; --ink2:#b9bacd; --muted:#8a8ca4; --line:#34364c;
+  --gate:#d6ab52; --gate2:#8c6b25; --e:#ff5c9e; --spin:#6f9dff; --ok:#3fcf8f; --bad:#ff7d4a; --hanko:#ff6b78;
+  --chipA:#22233a; --chipB:#1b2536; --chipC:#2a1f2e;
+  color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--wafer);color:var(--ink);font:400 16px/1.75 var(--font-body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button{font:inherit;color:inherit}
+img,svg{max-width:100%}
+:focus-visible{outline:3px solid var(--spin);outline-offset:2px}
+[hidden]{display:none!important}
+
+.topbar{display:flex;align-items:center;gap:12px;max-width:1240px;margin:0 auto;padding:14px 20px}
+.brand{background:none;border:0;padding:0;font-family:var(--font-display);font-size:18px;cursor:pointer;color:var(--ink);letter-spacing:.02em}
+.sim-badge{margin-left:auto;font-size:12.5px;color:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:3px 12px;background:var(--panel);white-space:nowrap}
+main{max-width:1240px;margin:0 auto;padding:0 20px 56px}
+.screen{display:none}
+.screen.is-active{display:block}
+
+/* ---------- home ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:36px;align-items:center;padding:20px 0 40px}
+.hero h1{font-family:var(--font-display);font-weight:400;font-size:clamp(42px,6.6vw,80px);line-height:1.06;margin:0 0 22px;letter-spacing:.01em}
+.lead{font-size:17px;max-width:27em;color:var(--ink2);margin:0}
+.chipfig{margin:0}
+.chip{width:100%;height:auto;display:block;border-radius:24px}
+.chipfig figcaption{font-size:13.5px;color:var(--muted);margin-top:10px;max-width:40em}
+.chip .gate{fill:var(--gate)}
+.chip .gate-hi{fill:var(--gate2);opacity:.55}
+.chip .ring{fill:none;stroke:var(--ink2);stroke-width:1.5;stroke-dasharray:4 5;opacity:.6}
+.chip .lat{fill:var(--ink);opacity:.07}
+.chip .engrave{font-family:var(--font-display);font-size:22px;fill:var(--wafer)}
+.chip .num{font-family:var(--font-display);font-size:18px;fill:var(--ink)}
+.chip a{cursor:pointer}
+.chip .f{transform-box:fill-box;animation:fdown .8s cubic-bezier(.2,.8,.2,1) both}
+.chip .f.up{animation-name:fup}
+.chip .glow{transform-box:fill-box;transform-origin:center;animation:glow 1s ease-out both}
+@keyframes fdown{from{transform:translateY(-55%);opacity:0}}
+@keyframes fup{from{transform:translateY(55%);opacity:0}}
+@keyframes glow{from{transform:scale(.3);opacity:0}}
+
+.missions{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.missions li{display:flex}
+.mission{all:unset;box-sizing:border-box;display:flex;flex-direction:column;gap:8px;width:100%;padding:22px 22px 20px;background:var(--panel);border:1px solid var(--line);border-radius:20px;cursor:pointer}
+.mission:hover{border-color:var(--ink2)}
+.mission:focus-visible{outline:3px solid var(--spin);outline-offset:3px}
+.m-step{display:flex;align-items:baseline;gap:12px}
+.m-num{font-family:var(--font-display);font-size:44px;line-height:1;color:var(--gate)}
+.m-verb{font-family:var(--font-display);font-size:24px;line-height:1}
+.mission h2{font-size:18px;font-weight:700;margin:6px 0 0;line-height:1.45}
+.mission p{margin:0;color:var(--ink2);font-size:15px;flex:1}
+.m-go{margin-top:8px;font-weight:700;font-size:15px;color:var(--e)}
+.note{margin:30px 0 0;font-size:13.5px;color:var(--muted);max-width:62em}
+@media (max-width:860px){.hero{grid-template-columns:1fr;gap:24px}.missions{grid-template-columns:1fr}}
+
+/* ---------- game shell ---------- */
+.game-head{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;padding:2px 0 14px}
+.back{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 16px;cursor:pointer;font-size:14px;font-weight:500}
+.gh-title{display:flex;flex-direction:column;min-width:0}
+.gh-num{font-size:13px;color:var(--gate);font-weight:700;line-height:1.4}
+.gh-title h2{font-family:var(--font-display);font-weight:400;font-size:clamp(20px,2.6vw,28px);margin:0;line-height:1.3}
+.levels{margin-left:auto;display:flex;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px}
+.levels button{border:0;background:transparent;border-radius:9px;padding:7px 14px;font-size:14px;cursor:pointer;color:var(--ink2);font-weight:700}
+.levels button[aria-checked="true"]{background:var(--ink);color:var(--panel)}
+.hud{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.hud > div{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:5px 16px;display:flex;align-items:baseline;gap:10px}
+.hud span{font-size:13px;color:var(--ink2)}
+.hud b{font-family:var(--font-display);font-weight:400;font-size:22px;font-variant-numeric:tabular-nums}
+.game-body{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:18px;align-items:start}
+@media (max-width:920px){.game-body{grid-template-columns:1fr}}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.cvbox{position:relative;width:100%;border-radius:14px;overflow:hidden;background:var(--panel2)}
+.cvbox canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.r-main{aspect-ratio:16/8.6}
+.r-strip{aspect-ratio:16/3.4}
+.r-clock{aspect-ratio:16/8.4}
+.r-line{aspect-ratio:16/4.6}
+.r-scope{aspect-ratio:16/7.6}
+.r-pulse{aspect-ratio:16/5.6}
+#cvC2{touch-action:none;cursor:crosshair}
+.pbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:0 6px;font-size:13.5px;color:var(--muted)}
+.pbar span{flex:1 1 220px;min-width:0}
+.pbar .btn{padding:7px 16px;font-size:14px}
+.diag{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.diag > div{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:7px 12px;border-radius:10px;background:var(--panel2);font-size:14px}
+.diag b{font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.diag .dt{display:block;font-size:12.5px;color:var(--muted);font-weight:400;line-height:1.5}
+.diag .g{color:var(--ok)} .diag .y{color:var(--gate)} .diag .r{color:var(--bad)}
+.overlay{position:absolute;left:50%;top:4%;width:max-content;max-width:92%;text-align:center;pointer-events:none;font-family:var(--font-display);font-size:clamp(18px,3vw,30px);line-height:1.3;opacity:0;transform:translate(-50%,8px);transition:opacity .25s,transform .25s;padding:8px 20px 10px;border-radius:16px;background:var(--panel);background:color-mix(in srgb,var(--panel) 90%,transparent)}
+.overlay.show{opacity:1;transform:translate(-50%,0)}
+.overlay.good{color:var(--ok)} .overlay.bad{color:var(--bad)}
+.overlay small{display:block;font-family:var(--font-body);font-size:14.5px;font-weight:700;color:var(--ink2);margin-top:2px}
+#aOv{top:24%}
+.overlay.clock{left:32%}
+.overlay.center{left:32%;top:50%;background:transparent;font-size:clamp(46px,9vw,96px);transform:translate(-50%,-44%)}
+.overlay.center.show{transform:translate(-50%,-50%)}
+.overlay.right{left:auto;right:3%;top:auto;bottom:6%;transform:translateY(8px);text-align:left}
+.overlay.right.show{transform:none}
+
+.controls{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;padding:2px 6px}
+.ctl{flex:1 1 220px;min-width:0}
+.ctl label{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;font-weight:700;font-size:15px}
+.ctl small{font-weight:400;color:var(--ink2);font-size:13px}
+.ticks{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-top:-4px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:46px;background:transparent;margin:0;cursor:pointer;touch-action:none}
+input[type=range]::-webkit-slider-runnable-track{height:10px;border-radius:99px;background:linear-gradient(90deg,var(--gate2),var(--gate))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:34px;height:34px;border-radius:50%;background:var(--panel);border:4px solid var(--ink);margin-top:-12px}
+input[type=range]::-moz-range-track{height:10px;border-radius:99px;background:linear-gradient(90deg,var(--gate2),var(--gate))}
+input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--panel);border:4px solid var(--ink)}
+input[type=range]:disabled{opacity:.4;cursor:default}
+
+.btn{border:0;border-radius:999px;padding:12px 26px;font-weight:700;font-size:16px;cursor:pointer;transition:transform .08s ease}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--ink);color:var(--panel)}
+.btn:disabled{opacity:.4;cursor:default;transform:none}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.btn.big{font-size:18px;padding:15px 30px;min-width:9.5em}
+
+.side{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px 18px}
+.status{margin:0;font-size:15.5px;line-height:1.75}
+.status b{font-weight:700}
+.log{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.log:empty{display:none}
+.log li{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:6px 12px;border-radius:10px;background:var(--panel2)}
+.log small{color:var(--muted);font-size:12.5px;margin-left:4px}
+.log .ok{color:var(--ok);font-weight:700;white-space:nowrap}
+.log .ng{color:var(--bad);font-weight:700;white-space:nowrap}
+.how summary{cursor:pointer;font-weight:700}
+.how ol{margin:10px 0 0;padding-left:1.3em;font-size:14.5px;color:var(--ink2)}
+.how li{margin-bottom:4px}
+.lockmsg{margin:-6px 0 0;font-size:13px;color:var(--muted);text-align:center}
+.res{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.res div{display:flex;justify-content:space-between;gap:10px;padding:6px 12px;border-radius:10px;background:var(--panel2);font-size:14.5px}
+.res div.me{background:transparent;border:1.5px solid var(--e)}
+.res b{font-family:var(--font-display);font-weight:400;font-variant-numeric:tabular-nums}
+
+/* rhythm game */
+.deck{display:flex;flex-wrap:wrap;gap:12px}
+.flip{flex:1 1 260px;border:0;border-radius:20px;padding:18px 20px;font-family:var(--font-display);font-size:30px;line-height:1.2;background:var(--e);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:18px;user-select:none;-webkit-user-select:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.flip:disabled{background:var(--panel2);color:var(--muted);cursor:default}
+.flip.hit{animation:hit .2s ease-out}
+@keyframes hit{50%{transform:scale(.95)}}
+.pips{display:flex;flex-wrap:wrap;gap:6px;max-width:120px}
+.pips i{width:11px;height:11px;border-radius:50%;background:currentColor}
+.pips i.used{opacity:.25}
+.deck .btn{flex:0 0 auto;align-self:center}
+
+/* detective */
+.c-deck{display:grid;grid-template-columns:200px minmax(0,1fr);gap:16px;align-items:center}
+@media (max-width:560px){.c-deck{grid-template-columns:1fr}}
+.dd{width:100%;height:auto;display:block;background:var(--panel2);border-radius:14px}
+.dd .gate{fill:var(--gate)}
+.dd .dot{fill:var(--panel);stroke:var(--ink2);stroke-width:1.5;stroke-dasharray:4 4}
+.dd .el{fill:var(--e)}
+.dd .el-t{fill:#fff;font:700 15px var(--font-body);text-anchor:middle;dominant-baseline:central}
+.dd .cap{fill:var(--ink2);font:700 11px var(--font-body);text-anchor:middle}
+.dd .sen{fill:none;stroke:var(--ink);stroke-width:2}
+.dd .sen-t{fill:var(--muted);font:500 9.5px var(--font-body);text-anchor:middle}
+.dd .blk{stroke:var(--bad);stroke-width:4;stroke-linecap:round}
+.dd .hop{fill:none;stroke:var(--spin);stroke-width:2;stroke-dasharray:3 4}
+.decide{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dbtn{border:0;border-radius:18px;padding:14px 12px;cursor:pointer;text-align:center;font-family:var(--font-display);font-size:22px;line-height:1.3;color:#fff;-webkit-tap-highlight-color:transparent}
+.dbtn small{display:block;font-family:var(--font-body);font-size:13.5px;font-weight:700;opacity:.92}
+.dbtn.s{background:var(--spin)}
+.dbtn.t{background:var(--e)}
+.dbtn:disabled{opacity:.3;cursor:default}
+.c-right{display:flex;flex-direction:column;gap:12px}
+.c-right .btn{align-self:flex-start}
+
+
+/* ---------- game feel: topbar extras ---------- */
+.star-chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:3px 12px;font-weight:700;font-size:14px;cursor:pointer;color:var(--gate);white-space:nowrap;line-height:1.6}
+.star-chip b{color:var(--ink);font-family:var(--font-display);font-weight:400;margin-left:3px}
+.snd{border:1px solid var(--line);background:var(--panel);border-radius:999px;width:40px;height:32px;display:grid;place-items:center;cursor:pointer;padding:0;flex:0 0 auto}
+.snd svg{width:19px;height:19px;fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.snd .mu{display:none}
+.snd[aria-pressed="false"] .wv{display:none}
+.snd[aria-pressed="false"] .mu{display:inline}
+/* progress on home */
+.cta{margin-top:26px}
+.prog{display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:16px 22px;margin:0 0 16px}
+.pg-badge{display:flex;flex-direction:column}
+.pg-badge span{font-size:12.5px;color:var(--ink2);font-weight:700}
+.pg-badge b{font-family:var(--font-display);font-weight:400;font-size:26px;line-height:1.25;color:var(--e)}
+.pg-meter{flex:1 1 260px}
+.pg-bar{height:14px;border-radius:99px;background:var(--panel2);overflow:hidden;border:1px solid var(--line)}
+.pg-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gate2),var(--gate),var(--e));border-radius:99px;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.pg-meter p{margin:6px 0 0;font-size:14px;color:var(--ink2)}
+.pg-meter p b{font-family:var(--font-display);font-weight:400;color:var(--ink);font-size:19px}
+.m-stars{display:flex;flex-wrap:wrap;gap:2px 14px;font-size:13px;color:var(--ink2);font-weight:700;margin-top:4px}
+.m-stars span{white-space:nowrap}
+.m-stars em{font-style:normal;color:var(--gate);letter-spacing:1px;margin-left:2px}
+.mission{transition:transform .15s ease,box-shadow .15s ease,border-color .15s}
+.mission:hover{transform:translateY(-3px);box-shadow:0 12px 28px -16px rgba(20,20,40,.45)}
+.linkbtn{background:none;border:0;padding:4px 0;color:var(--muted);font-size:12.5px;text-decoration:underline;cursor:pointer;margin-top:12px}
+/* level buttons with stars */
+.levels button{display:flex;flex-direction:column;align-items:center;line-height:1.25;padding:5px 14px}
+.lv-s{font-size:10.5px;letter-spacing:1px;color:var(--gate);font-weight:700}
+.levels button[aria-checked="true"] .lv-s{color:var(--gate2)}
+/* hud highlights */
+.hud > div{transition:border-color .2s,background .2s}
+.hud > div.hot{border-color:var(--e);background:color-mix(in srgb,var(--e) 12%,var(--panel))}
+.hud > div.hot b{color:var(--e)}
+.hud b{display:inline-block}
+.bump{animation:bump .35s ease-out}
+@keyframes bump{40%{transform:scale(1.35)}}
+.btn.attn{animation:attn 1.5s ease-in-out infinite}
+@keyframes attn{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--e) 60%,transparent)}60%{box-shadow:0 0 0 10px color-mix(in srgb,var(--e) 0%,transparent)}}
+/* popups, shake, particles */
+.pop{position:absolute;transform:translate(-50%,-50%);pointer-events:none;font-family:var(--font-display);font-size:clamp(22px,3.6vw,38px);line-height:1;white-space:nowrap;color:var(--ink);text-shadow:0 2px 0 var(--panel),0 -2px 0 var(--panel),2px 0 0 var(--panel),-2px 0 0 var(--panel);animation:pop 1.25s cubic-bezier(.2,.9,.3,1) forwards;z-index:3}
+.pop.good{color:var(--ok)}
+.pop.bad{color:var(--bad);font-size:clamp(18px,2.8vw,28px)}
+.pop.combo{color:var(--e)}
+.pop.perfect{background:linear-gradient(90deg,var(--gate),var(--e),var(--spin));-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 2px 0 var(--panel)) drop-shadow(0 -1px 0 var(--panel));font-size:clamp(26px,4.4vw,46px)}
+@keyframes pop{0%{opacity:0;transform:translate(-50%,-30%) scale(.4)}15%{opacity:1;transform:translate(-50%,-50%) scale(1.18)}28%{transform:translate(-50%,-50%) scale(1)}72%{opacity:1}100%{opacity:0;transform:translate(-50%,-125%) scale(1)}}
+.shake{animation:shake .4s ease-in-out}
+@keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(2px)}}
+#fxc{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:60}
+/* detective stamp */
+.ddwrap{position:relative}
+.stamp{position:absolute;right:3.5%;bottom:17%;font-family:var(--font-display);font-size:clamp(24px,3.6vw,36px);line-height:1;padding:7px 10px 8px;border:4px solid currentColor;border-radius:12px;opacity:0;pointer-events:none;transform:rotate(-14deg);background:color-mix(in srgb,var(--panel2) 70%,transparent)}
+.stamp.ok{color:var(--hanko)}
+.stamp.ng{color:var(--muted)}
+.stamp.show{animation:stamp .38s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes stamp{0%{opacity:0;transform:rotate(-14deg) scale(2.6)}60%{opacity:.95}100%{opacity:.92;transform:rotate(-14deg) scale(1)}}
+/* result screen */
+.result{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;padding-top:max(16px,env(safe-area-inset-top,0px));padding-bottom:max(16px,env(safe-area-inset-bottom,0px));background:rgba(12,12,24,.58);overflow:auto;animation:fadein .2s ease-out}
+@keyframes fadein{from{opacity:0}}
+.rs-card{position:relative;width:min(540px,100%);background:var(--panel);color:var(--ink);border-radius:26px;padding:24px 24px 20px;box-shadow:0 30px 80px -30px rgba(0,0,0,.55);animation:rsIn .45s cubic-bezier(.2,1.4,.4,1)}
+@keyframes rsIn{from{transform:translateY(30px) scale(.92);opacity:0}}
+.rs-x{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--panel2);cursor:pointer;font-size:20px;line-height:1;display:grid;place-items:center}
+.rs-mis{margin:0 44px 12px 0;font-size:13.5px;font-weight:700;color:var(--gate)}
+.rs-top{display:flex;align-items:center;gap:20px}
+.rs-rank{flex:0 0 auto;width:112px;height:112px;border-radius:28px;display:grid;place-items:center;font-family:var(--font-display);font-size:78px;line-height:1;color:#fff;background:var(--muted);opacity:0;transform:scale(2) rotate(-12deg)}
+.rs-rank.show{animation:rankIn .45s cubic-bezier(.3,1.5,.5,1) forwards}
+@keyframes rankIn{to{opacity:1;transform:scale(1) rotate(-6deg)}}
+.rs-rank.r-S{background:linear-gradient(135deg,var(--gate),var(--e) 60%,var(--spin));box-shadow:0 0 0 4px var(--gate2),0 0 34px color-mix(in srgb,var(--e) 70%,transparent)}
+.rs-rank.r-A{background:var(--e)}
+.rs-rank.r-B{background:var(--spin)}
+.rs-main{min-width:0}
+.rs-title{margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(21px,4.4vw,29px);line-height:1.25}
+.rs-stars{display:flex;gap:6px;margin:6px 0 2px}
+.rs-stars i{font-style:normal;font-size:34px;line-height:1;color:var(--line)}
+.rs-stars i.on{color:var(--gate);animation:starIn .45s cubic-bezier(.3,1.8,.5,1)}
+@keyframes starIn{0%{transform:scale(0) rotate(-90deg)}100%{transform:scale(1)}}
+.rs-score{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.rs-score b{font-family:var(--font-display);font-weight:400;font-size:40px;font-variant-numeric:tabular-nums;line-height:1.1}
+.rs-new{font-size:13px;font-weight:700;color:#fff;background:var(--e);border-radius:999px;padding:2px 10px;animation:bump .5s ease-out}
+.rs-sub{margin:12px 0 0;font-size:14.5px;color:var(--ink2)}
+.rs-lvup{margin:10px 0 0;padding:8px 14px;border-radius:12px;background:color-mix(in srgb,var(--gate) 20%,var(--panel));font-weight:700;font-size:15px;animation:bump .5s ease-out}
+.rs-tip{margin:10px 0 0;font-size:14px;color:var(--ink2);background:var(--panel2);border-radius:12px;padding:8px 12px}
+.rs-tip b{color:var(--gate);margin-right:6px}
+.rs-entry{margin-top:14px;padding:12px 14px;border-radius:14px;border:2px dashed var(--e)}
+.rs-entry label{display:block;font-weight:700;color:var(--e);margin-bottom:6px}
+.rs-entry div{display:flex;gap:8px}
+.rs-entry input{flex:1;min-width:0;font:inherit;font-size:17px;padding:8px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--panel2);color:var(--ink)}
+.rs-bh{margin:14px 0 4px;font-size:13px;font-weight:700;color:var(--ink2)}
+.rs-board{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;counter-reset:rk}
+.rs-board li{display:flex;gap:10px;align-items:baseline;padding:4px 12px;border-radius:10px;background:var(--panel2);font-size:14.5px;counter-increment:rk}
+.rs-board li::before{content:counter(rk) "位";font-weight:700;color:var(--gate);min-width:2.4em}
+.rs-board li span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rs-board li b{font-family:var(--font-display);font-weight:400;font-variant-numeric:tabular-nums}
+.rs-board li.me{outline:2px solid var(--e);background:color-mix(in srgb,var(--e) 12%,var(--panel2))}
+.rs-board:empty::after{content:"まだ記録がありません。1位をねらおう！";font-size:13px;color:var(--muted)}
+.rs-btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.rs-btns .btn{white-space:nowrap}
+.rs-btns .btn.big{flex:1 1 40%;min-width:0;padding:14px 16px;font-size:17px}
+.rs-btns .btn.ghost{flex:1 1 40%}
+
+
+/* ---------- v3: many levels, maze, tech editor, drawing ---------- */
+.levels{flex-wrap:wrap;justify-content:flex-end}
+.levels .sep{width:1px;align-self:stretch;background:var(--line);margin:2px 2px}
+.missions{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:1100px){.missions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.maze-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;flex:1 1 300px;font-size:14.5px;color:var(--ink2)}
+.maze-ctl b{color:var(--ink)}
+.pill{border:1.5px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 14px;font-weight:700;font-size:14px;cursor:pointer;color:var(--ink);white-space:nowrap}
+.pill:hover{border-color:var(--ink2)}
+.pill[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.pill:disabled{opacity:.4;cursor:default}
+.tech{display:flex;flex-direction:column;gap:10px;padding:2px 4px}
+.tech-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.tech-lbl{font-size:13px;font-weight:700;color:var(--ink2);min-width:6.5em}
+.nstep{display:inline-flex;align-items:center;gap:6px;margin-left:4px;font-size:14px;font-weight:700}
+.nstep button{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:var(--panel);cursor:pointer;font-size:18px;line-height:1;font-weight:700}
+.nstep b{font-family:var(--font-display);font-weight:400;font-size:20px;min-width:1.6em;text-align:center}
+.r-filter{aspect-ratio:16/4.4}
+.tech-note{font-size:12.5px;color:var(--muted);margin:0}
+/* drawing mission */
+.r-draw{aspect-ratio:16/7.2;touch-action:none;cursor:crosshair}
+.d-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);gap:12px}
+.r-lz{aspect-ratio:1/0.82}
+.r-shots{aspect-ratio:16/9.4}
+.d-ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.d-ctl .btn.big{margin-left:auto}
+@media (max-width:560px){
+  .levels{display:grid;grid-template-columns:repeat(3,1fr)}
+  .levels[data-n="4"]{grid-template-columns:repeat(4,1fr)}
+  .levels .sep{display:none}
+  .levels button{padding:5px 6px}
+  .missions{grid-template-columns:1fr}
+  .d-row{grid-template-columns:1fr}
+  .r-draw{aspect-ratio:4/3.2}
+  .r-filter{aspect-ratio:16/7}
+  .d-ctl .btn.big{margin-left:0}
+}
+
+/* explanation dialog */
+dialog{border:0;border-radius:22px;padding:0;width:min(680px,calc(100vw - 28px));max-height:calc(100vh - 40px);background:var(--panel);color:var(--ink)}
+dialog::backdrop{background:rgba(12,12,24,.55)}
+.ex{padding:26px 28px 6px;overflow:auto;max-height:calc(100vh - 130px)}
+.ex h3{font-family:var(--font-display);font-weight:400;font-size:clamp(20px,3vw,26px);line-height:1.35;margin:0 0 12px}
+.ex h4{font-size:16px;margin:18px 0 2px;color:var(--gate)}
+.ex p{margin:0;color:var(--ink2);font-size:15.5px}
+.ex .fine{font-size:13px;color:var(--muted);margin-top:14px}
+.ex-foot{display:flex;justify-content:flex-end;padding:14px 20px 20px}
+
+@media (max-width:560px){
+  .r-main{aspect-ratio:4/3.3}
+  .r-strip{aspect-ratio:16/5.5}
+  .r-clock{aspect-ratio:16/10.5}
+  .r-line{aspect-ratio:16/7.5}
+  .r-scope{aspect-ratio:4/3.1}
+  .r-pulse{aspect-ratio:16/8.8}
+  .dd{max-width:250px;margin:0 auto}
+  .hud{gap:8px}
+  .hud > div{padding:4px 12px;gap:8px}
+  .hud b{font-size:19px}
+  .overlay small{font-size:13px}
+  main{padding:0 12px 40px}
+  .topbar{padding:12px}
+  .stage{padding:10px;border-radius:18px}
+  .levels{margin-left:0;width:100%}
+  .levels button{flex:1}
+  .btn.big{width:100%}
+  .rs-btns .btn.big{width:auto;min-width:0}
+}
+@media (max-width:560px){
+  .topbar{flex-wrap:wrap;row-gap:8px}
+  .brand{font-size:16px}
+  .star-chip{margin-left:auto}
+  .sim-badge{order:9;margin-left:0;font-size:11.5px}
+  .rs-card{padding:20px 16px 16px;border-radius:22px}
+  .rs-top{gap:14px}
+  .rs-rank{width:84px;height:84px;font-size:56px;border-radius:22px}
+  .rs-stars i{font-size:28px}
+  .rs-score b{font-size:32px}
+  .prog{padding:14px 16px}
+}
+@media (prefers-reduced-motion: reduce){
+  .rs-rank.show{opacity:1;transform:rotate(-6deg)}
+  .stamp.show{opacity:.92}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <button class="brand" type="button" data-go="home">量子デバイス体験ラボ</button>
+  <span class="sim-badge">教育用シミュレーション</span>
+  <button class="star-chip" type="button" data-go="home" id="starChip" aria-label="あつめた星の数">★<b>0</b></button>
+  <button class="snd" type="button" id="sndBtn" aria-pressed="true" aria-label="効果音のオン・オフ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="wv" d="M15.5 9a4 4 0 0 1 0 6M18.2 6.5a7.5 7.5 0 0 1 0 11"/><path class="mu" d="M16 9.5l5 5M21 9.5l-5 5"/></svg></button>
+</header>
+
+<main>
+<!-- ================= HOME ================= -->
+<section id="home" class="screen is-active" aria-labelledby="homeTitle">
+  <div class="hero">
+    <div>
+      <h1 id="homeTitle">電子1個を、<br>あやつる。</h1>
+      <p class="lead">シリコンの中に閉じ込めた電子を運び、雑音から守り、見えない状態を読み出す。量子コンピュータを作るのに欠かせない技を、ゲームで体験しよう。</p>
+      <button class="btn primary big cta attn" type="button" data-go="gA">ミッション1からスタート ▶</button>
+    </div>
+    <figure class="chipfig">
+      <svg class="chip" viewBox="0 0 520 320" role="img" aria-label="シリコンの上に金属電極が並び、3つの量子ドットができている図">
+        <defs>
+          <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" style="stop-color:var(--chipA)"/>
+            <stop offset=".55" style="stop-color:var(--chipB)"/>
+            <stop offset="1" style="stop-color:var(--chipC)"/>
+          </linearGradient>
+          <radialGradient id="eglow">
+            <stop offset="0" style="stop-color:var(--e);stop-opacity:.95"/>
+            <stop offset=".45" style="stop-color:var(--e);stop-opacity:.45"/>
+            <stop offset="1" style="stop-color:var(--e);stop-opacity:0"/>
+          </radialGradient>
+          <pattern id="lattice" width="14" height="14" patternUnits="userSpaceOnUse">
+            <circle class="lat" cx="7" cy="7" r="1.3"/>
+          </pattern>
+        </defs>
+        <rect width="520" height="320" rx="24" fill="url(#sheen)"/>
+        <rect width="520" height="320" rx="24" fill="url(#lattice)"/>
+        <!-- plunger gates -->
+        <g class="f" style="animation-delay:.05s"><rect class="gate" x="116" y="-20" width="30" height="138" rx="15"/><rect class="gate-hi" x="120" y="-20" width="6" height="130" rx="3"/></g>
+        <g class="f" style="animation-delay:.15s"><rect class="gate" x="245" y="-20" width="30" height="138" rx="15"/><rect class="gate-hi" x="249" y="-20" width="6" height="130" rx="3"/></g>
+        <g class="f" style="animation-delay:.25s"><rect class="gate" x="374" y="-20" width="30" height="138" rx="15"/><rect class="gate-hi" x="378" y="-20" width="6" height="130" rx="3"/></g>
+        <!-- barrier gates -->
+        <g class="f" style="animation-delay:.1s"><rect class="gate" x="187" y="-20" width="16" height="164" rx="8"/></g>
+        <g class="f" style="animation-delay:.2s"><rect class="gate" x="317" y="-20" width="16" height="164" rx="8"/></g>
+        <g class="f" style="animation-delay:.3s"><rect class="gate" x="436" y="-20" width="16" height="164" rx="8"/><rect class="gate" x="58" y="-20" width="16" height="164" rx="8"/></g>
+        <!-- screening gate -->
+        <g class="f up" style="animation-delay:.2s"><rect class="gate" x="40" y="214" width="440" height="140" rx="18"/>
+          <text class="engrave" x="131" y="266" text-anchor="middle">運ぶ</text>
+          <text class="engrave" x="260" y="266" text-anchor="middle">守る</text>
+          <text class="engrave" x="389" y="266" text-anchor="middle">読む</text>
+        </g>
+        <!-- quantum dots -->
+        <a data-go="gA" aria-hidden="true" tabindex="-1"><circle class="glow" cx="131" cy="168" r="44" fill="url(#eglow)" style="animation-delay:.85s"/><circle class="ring" cx="131" cy="168" r="30"/><text class="num" x="131" y="175" text-anchor="middle">1</text></a>
+        <a data-go="gB" aria-hidden="true" tabindex="-1"><circle class="glow" cx="260" cy="168" r="44" fill="url(#eglow)" style="animation-delay:1.05s"/><circle class="ring" cx="260" cy="168" r="30"/><text class="num" x="260" y="175" text-anchor="middle">2</text></a>
+        <a data-go="gC" aria-hidden="true" tabindex="-1"><circle class="glow" cx="389" cy="168" r="44" fill="url(#eglow)" style="animation-delay:1.25s"/><circle class="ring" cx="389" cy="168" r="30"/><text class="num" x="389" y="175" text-anchor="middle">3</text></a>
+      </svg>
+      <figcaption>シリコンの表面に並べた金属の電極（ゲート）に電圧をかけると、電子を1個ずつ閉じ込める小さな箱「量子ドット」ができます。</figcaption>
+    </figure>
+  </div>
+
+  <div class="prog" id="prog">
+    <div class="pg-badge"><span>あなたの称号</span><b id="pgTitle">見習い研究員</b></div>
+    <div class="pg-meter">
+      <div class="pg-bar"><i id="pgFill"></i></div>
+      <p>あつめた★ <b id="pgStars">0</b> / <span id="pgMax">57</span>　<span id="pgNext"></span></p>
+    </div>
+  </div>
+  <ol class="missions">
+    <li><button class="mission" type="button" data-go="gA">
+      <span class="m-step"><span class="m-num">1</span><span class="m-verb">運ぶ</span></span>
+      <h2>電子を運べ！ 量子UFOキャッチャー</h2>
+      <p>つまみで電極の電圧を変えて、左の箱にいる電子を右の箱へ。ねらったタイミングで壁を閉じられるかな。</p>
+      <span class="m-stars" data-stars="A"></span>
+      <span class="m-go">あそぶ（約1分）</span>
+    </button></li>
+    <li><button class="mission" type="button" data-go="gB">
+      <span class="m-step"><span class="m-num">2</span><span class="m-verb">守る</span></span>
+      <h2>ノイズから守れ！ スピン・リズムゲーム</h2>
+      <p>雑音でバラバラになっていく量子の時計。反転ボタンを押すタイミングで、ゴールの瞬間にもう一度そろえよう。</p>
+      <span class="m-stars" data-stars="B"></span>
+      <span class="m-go">あそぶ（1回6秒）</span>
+    </button></li>
+    <li><button class="mission" type="button" data-go="gC">
+      <span class="m-step"><span class="m-num">3</span><span class="m-verb">読む</span></span>
+      <h2>量子探偵 ― 見えないスピンを読み解け！</h2>
+      <p>ザラザラの信号から、2つの電子スピンの組み合わせを見破ろう。早すぎても、待ちすぎても、まちがえやすい。超上級は、読み出しパルスの手描きに挑戦。</p>
+      <span class="m-stars" data-stars="C"></span>
+      <span class="m-go">あそぶ（約2分）</span>
+    </button></li>
+    <li><button class="mission" type="button" data-go="gD">
+      <span class="m-step"><span class="m-num">4</span><span class="m-verb">描く</span></span>
+      <h2>パルス職人 ― 手書きの電圧で量子を操れ！</h2>
+      <p>電圧の変化（パルス）を指で描いて、電子の状態を思いどおりに変えよう。ゆっくり？ 一気に？ 描き方しだいで結果が変わる。</p>
+      <span class="m-stars" data-stars="D"></span>
+      <span class="m-go">あそぶ（1問1分）</span>
+    </button></li>
+  </ol>
+  <p class="note">これは物理をわかりやすくした教育用シミュレーションです。本物の現象はナノ秒〜マイクロ秒で起きるので、ゆっくり再生しています。ゲームの「測定」は、人が画面を見ることではなく、測定器（電荷センサー）を動かす操作を表しています。</p>
+  <button class="linkbtn" type="button" id="resetAll">記録をリセット（スタッフ用）</button>
+</section>
+
+<!-- ================= GAME A: transport ================= -->
+<section id="gA" class="screen" aria-labelledby="gATitle">
+  <div class="game-head">
+    <button class="back" type="button" data-go="home">ホームへ</button>
+    <div class="gh-title"><span class="gh-num">ミッション1 運ぶ</span><h2 id="gATitle">電子を運べ！ 量子UFOキャッチャー</h2></div>
+    <div class="levels" role="radiogroup" aria-label="レベル" id="aLv"></div>
+  </div>
+  <div class="hud">
+    <div><span>ラウンド</span><b id="aRound">1/5</b></div>
+    <div><span>スコア</span><b id="aScore">0</b></div>
+    <div><span>コンボ</span><b id="aCombo">0</b></div>
+    <div><span>ベスト</span><b id="aBest">—</b></div>
+  </div>
+  <div class="game-body">
+    <div class="stage">
+      <div class="cvbox r-main"><canvas id="cvA" aria-label="量子ドットと電子のようす"></canvas><div class="overlay" id="aOv" aria-live="polite"></div></div>
+      <div class="cvbox r-strip"><canvas id="cvA2" aria-label="右の箱にいる確率の変化"></canvas></div>
+      <div class="controls">
+        <div class="ctl" id="aBarWrap">
+          <label for="aBar">壁ゲート <small>右へ動かすほど壁が下がる</small></label>
+          <input type="range" id="aBar" min="0" max="1000" value="0">
+          <div class="ticks"><span>壁を上げる（閉じる）</span><span>下げる（開く）</span></div>
+        </div>
+        <div class="ctl" id="aTiltWrap">
+          <label for="aTilt">傾きゲート <small>どちらの箱を低くするか</small></label>
+          <input type="range" id="aTilt" min="-1000" max="1000" value="-1000">
+          <div class="ticks"><span>左が低い</span><span>平ら</span><span>右が低い</span></div>
+        </div>
+        <div class="maze-ctl" id="aMazeCtl" hidden>
+          <span>金色のゲートを<b>タップ</b>で開け閉め</span>
+          <button class="pill" type="button" id="aCloseAll">ぜんぶ閉じる</button>
+        </div>
+        <button class="btn primary big" type="button" id="aMain">スタート</button>
+      </div>
+    </div>
+    <aside class="side">
+      <div class="card"><p class="status" id="aStatus" aria-live="polite"></p><ol class="log" id="aLog"></ol></div>
+      <details class="card how" open>
+        <summary>あそびかた</summary>
+        <ol>
+          <li>「スタート」を押すと、左の箱に電子が1個入ります。</li>
+          <li>壁ゲートのつまみで壁を下げると、電子が右へしみ出していきます。</li>
+          <li>ここだと思ったら「測定する」。センサーが電子を右で見つけたら成功です。</li>
+          <li>5回の合計点で勝負。速いほどボーナス、確率95%以上でつかめば「PERFECT」、続けて成功すると「コンボ」で点数アップ！ スペースキーでも操作できます。</li>
+          <li>迷路1〜3では、金色のゲートをタップして開け閉めし、電子を S から G へ運びます。</li>
+        </ol>
+      </details>
+      <button class="btn ghost" type="button" id="aExplain">しくみを見る</button>
+      <p class="lockmsg" id="aLock">5回遊ぶと「しくみ」が開きます</p>
+    </aside>
+  </div>
+</section>
+
+<!-- ================= GAME B: spin echo ================= -->
+<section id="gB" class="screen" aria-labelledby="gBTitle">
+  <div class="game-head">
+    <button class="back" type="button" data-go="home">ホームへ</button>
+    <div class="gh-title"><span class="gh-num">ミッション2 守る</span><h2 id="gBTitle">ノイズから守れ！ スピン・リズムゲーム</h2></div>
+    <div class="levels" role="radiogroup" aria-label="レベル" id="bLv"></div>
+  </div>
+  <div class="hud">
+    <div><span>残り時間</span><b id="bTime">6.0</b></div>
+    <div><span>反転の残り</span><b id="bLeft">1</b></div>
+    <div><span>ベスト</span><b id="bBest">—</b></div>
+  </div>
+  <div class="game-body">
+    <div class="stage">
+      <div class="cvbox r-clock"><canvas id="cvB" aria-label="スピンの向きを表す時計"></canvas><div class="overlay" id="bOv" aria-live="polite"></div></div>
+      <div class="cvbox r-line"><canvas id="cvB2" aria-label="そろい度の変化と反転のタイミング"></canvas></div>
+      <div class="tech" id="bTech" hidden>
+        <div class="tech-row">
+          <span class="tech-lbl">お手本を置く</span>
+          <button class="pill" type="button" data-pre="hahn">ハーン</button>
+          <button class="pill" type="button" data-pre="cpmg">CPMG</button>
+          <button class="pill" type="button" data-pre="xy4">XY4</button>
+          <button class="pill" type="button" data-pre="xy8">XY8</button>
+          <button class="pill" type="button" data-pre="udd">UDD</button>
+          <span class="nstep"><button type="button" id="bNm" aria-label="回数を減らす">−</button><b id="bN">4</b><button type="button" id="bNp" aria-label="回数を増やす">＋</button>回</span>
+        </div>
+        <div class="tech-row">
+          <span class="tech-lbl">タップで置く軸</span>
+          <button class="pill" type="button" data-ax="Y" aria-pressed="true">Y軸（たて）</button>
+          <button class="pill" type="button" data-ax="X" aria-pressed="false">X軸（よこ）</button>
+          <button class="pill" type="button" id="bClear">ぜんぶ消す</button>
+        </div>
+        <p class="tech-note">タイムラインをタップでパルスを置く・ドラッグで動かす・パルスをタップで軸を切りかえ（X→削除）。</p>
+      </div>
+      <div class="cvbox r-filter" id="bFilterBox" hidden><canvas id="cvB3" aria-label="ノイズの周波数とフィルター"></canvas></div>
+      <div class="deck">
+        <button class="flip" type="button" id="bFlip" disabled>反転！<span class="pips" id="bPips"></span></button>
+        <button class="btn primary big" type="button" id="bMain">スタート</button>
+      </div>
+    </div>
+    <aside class="side">
+      <div class="card"><p class="status" id="bStatus" aria-live="polite"></p><div class="res" id="bRes" hidden></div></div>
+      <details class="card how" open>
+        <summary>あそびかた</summary>
+        <ol>
+          <li>「スタート」で、時計の針がすべて上を向いてそろいます。</li>
+          <li>針は少しずつ違う速さで回り、だんだんバラバラになります。</li>
+          <li>「反転！」ボタン（スペースキー）で、針を左右にひっくり返せます。回数には限りがあります。</li>
+          <li>ゴールの瞬間に針がそろっているほど高得点。★3つとSランクをめざそう！</li>
+          <li>技術1〜3は、パルス列を設計するエンジニアモード。タイムラインをタップしてパルスを置き、下のグラフでノイズとの重なりを確かめてから「実行する」。</li>
+        </ol>
+      </details>
+      <button class="btn ghost" type="button" id="bExplain">しくみを見る</button>
+      <p class="lockmsg" id="bLock">1回遊ぶと「しくみ」が開きます</p>
+    </aside>
+  </div>
+</section>
+
+<!-- ================= GAME C: detective ================= -->
+<section id="gC" class="screen" aria-labelledby="gCTitle">
+  <div class="game-head">
+    <button class="back" type="button" data-go="home">ホームへ</button>
+    <div class="gh-title"><span class="gh-num">ミッション3 読む</span><h2 id="gCTitle">量子探偵 ― 見えないスピンを読み解け！</h2></div>
+    <div class="levels" role="radiogroup" aria-label="レベル" id="cLv"></div>
+  </div>
+  <div class="hud">
+    <div><span>ペア</span><b id="cRound">1/8</b></div>
+    <div><span>正解</span><b id="cOk">0</b></div>
+    <div><span>連続</span><b id="cStreak">0</b></div>
+    <div><span>スコア</span><b id="cScore">0</b></div>
+    <div><span>ベスト</span><b id="cBest">—</b></div>
+  </div>
+  <div class="game-body">
+    <div class="stage">
+      <div class="cvbox r-pulse" id="cPulseBox" hidden><canvas id="cvC2" aria-label="読み出し電圧パルスの設計盤"></canvas></div>
+      <div class="pbar" id="cPulseBar" hidden>
+        <span>グラフの上をなぞって、電圧の動かし方を描こう。<b>ピンクの線はサッと、青い線はゆっくり</b>通るのがコツ。</span>
+        <button class="btn ghost" type="button" id="cReset">まっすぐに戻す</button>
+      </div>
+      <div class="cvbox r-scope"><canvas id="cvC" aria-label="電荷センサーの信号"></canvas><div class="overlay" id="cOv" aria-live="polite"></div><div class="stamp" id="cStamp" aria-hidden="true"></div></div>
+      <div class="c-deck">
+        <svg class="dd" id="cDD" viewBox="0 0 220 150" role="img" aria-label="2つの量子ドットと電子"></svg>
+        <div class="c-right">
+          <div class="decide">
+            <button class="dbtn s" type="button" id="cS" disabled>S：通れた<small>信号が下がる</small></button>
+            <button class="dbtn t" type="button" id="cT" disabled>T：通せんぼ<small>信号が高いまま</small></button>
+          </div>
+          <button class="btn primary big" type="button" id="cMain">読み出し開始</button>
+        </div>
+      </div>
+    </div>
+    <aside class="side">
+      <div class="card"><p class="status" id="cStatus" aria-live="polite"></p><div class="diag" id="cDiag" hidden></div><ol class="log" id="cLog"></ol></div>
+      <details class="card how" open>
+        <summary>あそびかた</summary>
+        <ol>
+          <li>2つの箱に、電子が1個ずつ入っています。2つのスピンの組み合わせは見えません。</li>
+          <li>「読み出し開始」で、左の電子を右の箱へ移そうとします。移れたかどうかを、センサーの信号が教えてくれます。</li>
+          <li>信号が下がれば S（移れた）、高いままなら T（通せんぼ）。わかった時点でボタンを押そう（←キー / →キー）。</li>
+          <li>早く当てるほどボーナス。連続で正解すると点数アップ！ 時間はゆっくり再生しています（1マイクロ秒を1秒で表示）。</li>
+          <li id="cHow4" hidden><b>超上級</b>：上のグラフをなぞって読み出しパルスを自分で設計します。右の「パルス診断」を見ながら形を直して、「パルスを実行」。</li>
+        </ol>
+      </details>
+      <button class="btn ghost" type="button" id="cExplain">しくみを見る</button>
+      <p class="lockmsg" id="cLock">8ペア遊ぶと「しくみ」が開きます</p>
+    </aside>
+  </div>
+</section>
+
+<!-- ================= GAME D: draw a pulse (Landau-Zener) ================= -->
+<section id="gD" class="screen" aria-labelledby="gDTitle">
+  <div class="game-head">
+    <button class="back" type="button" data-go="home">ホームへ</button>
+    <div class="gh-title"><span class="gh-num">ミッション4 描く（読むの応用）</span><h2 id="gDTitle">パルス職人 ― 手書きの電圧で量子を操れ！</h2></div>
+    <div class="levels" role="radiogroup" aria-label="課題" id="dLv"></div>
+  </div>
+  <div class="hud">
+    <div><span>課題</span><b id="dTask">1</b></div>
+    <div><span>挑戦</span><b id="dTry">0</b></div>
+    <div><span>ベスト</span><b id="dBest">—</b></div>
+  </div>
+  <div class="game-body">
+    <div class="stage" id="dStage">
+      <div class="cvbox r-draw"><canvas id="cvD" aria-label="パルスを描くキャンバス"></canvas><div class="overlay" id="dOv" aria-live="polite"></div></div>
+      <div class="d-row">
+        <div class="cvbox r-lz"><canvas id="cvD2" aria-label="エネルギーの図"></canvas></div>
+        <div class="cvbox r-shots"><canvas id="cvD3" aria-label="右の箱にいる確率とセンサーの読み出し"></canvas></div>
+      </div>
+      <div class="d-ctl">
+        <button class="pill" type="button" id="dClear">描き直す</button>
+        <button class="pill" type="button" id="dSample">線をなめらかに</button>
+        <button class="btn primary big" type="button" id="dMain">判定する</button>
+      </div>
+    </div>
+    <aside class="side">
+      <div class="card"><p class="status" id="dStatus" aria-live="polite"></p><ol class="log" id="dLog"></ol></div>
+      <details class="card how" open>
+        <summary>あそびかた</summary>
+        <ol>
+          <li>上のキャンバスに、指やマウスで線を描きます。横は時間、たては「傾きゲートの電圧」です。ペンを離したところから先は、その電圧のままになります。</li>
+          <li>最初、電子は左の箱にいます。電圧を上げていくと、右の箱のほうが低くなります。</li>
+          <li>真ん中の帯が、2つの状態がいちばん近づく「すれちがい地点」。ここをどう通るかがカギです。</li>
+          <li>「判定する」で、描いたパルスどおりに電子を動かし、センサーで100回読み出して結果を確かめます。</li>
+        </ol>
+      </details>
+      <button class="btn ghost" type="button" id="dExplain">しくみを見る</button>
+      <p class="lockmsg" id="dLock">1回判定すると「しくみ」が開きます</p>
+    </aside>
+  </div>
+</section>
+</main>
+
+
+<div class="result" id="result" role="dialog" aria-modal="true" aria-labelledby="rsTitle" hidden>
+  <div class="rs-card">
+    <button class="rs-x" type="button" id="rsClose" aria-label="閉じる">×</button>
+    <p class="rs-mis" id="rsMis"></p>
+    <div class="rs-top">
+      <div class="rs-rank" id="rsRank" aria-label="ランク">A</div>
+      <div class="rs-main">
+        <p class="rs-title" id="rsTitle"></p>
+        <div class="rs-stars" id="rsStars" aria-hidden="true"><i>★</i><i>★</i><i>★</i></div>
+        <div class="rs-score"><b id="rsScore">0</b><span class="rs-new" id="rsNew" hidden>ベスト更新！</span></div>
+      </div>
+    </div>
+    <p class="rs-sub" id="rsSub"></p>
+    <p class="rs-lvup" id="rsLvup" hidden></p>
+    <p class="rs-tip" id="rsTip"></p>
+    <div class="rs-entry" id="rsEntry" hidden>
+      <label for="rsName">ランクイン！ なまえを入れてね</label>
+      <div><input id="rsName" maxlength="8" autocomplete="off" placeholder="なまえ（8文字まで）"><button class="btn primary" type="button" id="rsSave">登録</button></div>
+    </div>
+    <p class="rs-bh">この端末のランキング</p>
+    <ol class="rs-board" id="rsBoard"></ol>
+    <div class="rs-btns">
+      <button class="btn primary big" type="button" id="rsRetry">もう一回</button>
+      <button class="btn primary big" type="button" id="rsNext">次のレベルへ ▶</button>
+      <button class="btn ghost" type="button" id="rsExplain">しくみを見る</button>
+      <button class="btn ghost" type="button" data-go="home">ホームへ</button>
+    </div>
+  </div>
+</div>
+<canvas id="fxc" aria-hidden="true"></canvas>
+
+<dialog id="explain" aria-labelledby="exTitle">
+  <div class="ex" id="exBody"></div>
+  <div class="ex-foot"><button class="btn primary" type="button" id="exClose">閉じる</button></div>
+</dialog>
+
+<template id="tplA">
+  <h3 id="exTitle">いま動かしたのは、量子ドットの中の電子</h3>
+  <p>シリコンの表面に細い金属電極（ゲート）を並べて電圧をかけると、電子を1個だけ閉じ込める小さな箱ができます。これが量子ドット。大きさは数十ナノメートルで、髪の毛の太さの千分の1ほどです。</p>
+  <h4>壁ゲート ＝ トンネル結合</h4>
+  <p>壁を下げると、電子は壁をすり抜けて（トンネル効果）、左と右の両方にいる「重ね合わせ」の状態になります。右にいる確率が行ったり来たりしたのは、この重ね合わせが振動していたからです。</p>
+  <h4>傾きゲート ＝ 左右のエネルギー差</h4>
+  <p>壁を下げたまま、ゆっくり右を低くしていくと、電子はいちばん低いエネルギーの状態についていき、ほぼ確実に右へ移ります（断熱的な移動）。急いで傾けると、電子は取り残されてしまいます（ランダウ・ツェナー遷移）。</p>
+  <h4>ノイズ</h4>
+  <p>まわりの電荷のゆらぎで振動がぼやけるので、タイミングに頼る作戦は失敗しやすくなります。ゆっくり傾ける作戦は、ずれやノイズに強いのが特長です。</p>
+  <h4>本物のデバイスでは</h4>
+  <p>この振動はナノ秒（10億分の1秒）ほどの出来事で、ゲームでは10億倍以上ゆっくりにしています。電子を思いどおりに置いたり運んだりする技術は、量子ビットをたくさん並べて量子コンピュータを作るための土台になります。</p>
+  <h4>迷路モード：量子ドットがたくさんになると</h4>
+  <p>量子コンピュータでは、たくさんの量子ドットを並べて、電子（とその情報）を必要な場所まで運ぶ技術が研究されています。ゲートを1つずつ開けて閉じるのは、2つの箱のあいだで電子を完全に移す「ラビ振動」の半周期をつなげていく方法です。</p>
+  <h4>量子の近道</h4>
+  <p>まっすぐ並んだ3つの箱で、2つのゲートを同時に開けると、電子の波は真ん中を通りながら、約1.4倍の速さで端まで完全に移ります（量子状態転送）。逆に、落とし穴の箱のようにエネルギーがずれていると、波はうまく乗り移れません。</p>
+</template>
+
+<template id="tplB">
+  <h3 id="exTitle">守っていたのは、電子スピンの「向き」</h3>
+  <p>電子は小さな磁石の性質（スピン）をもち、磁場の中でコマのように首をふって回ります。シリコンのスピン量子ビットでは、この向きに情報をのせます。</p>
+  <h4>時計の針の正体</h4>
+  <p>針の1本1本は、同じ実験を何度もくり返したときの、各回のスピンの向きです。まわりの原子核スピンや電気的な雑音のせいで、回る速さが毎回少しずつ違い、針はだんだんバラバラになります。これがデコヒーレンス（量子の情報がこわれていくこと）です。</p>
+  <h4>反転 ＝ スピンエコー</h4>
+  <p>途中でスピンを180度ひっくり返すと、先に進んでいた針が後ろに回ります。そのまま同じ速さで回り続けると、ゴールでふたたびそろいます。山びこ（エコー）のように戻ってくるので「スピンエコー」と呼びます。</p>
+  <h4>雑音のゆらぎ方で作戦が変わる</h4>
+  <p>雑音がゆっくり変わるときは、反転を等間隔に増やすほどよく守れます（動的デカップリング）。すばやく変わる雑音は反転でも追いつきにくいので、はじめから雑音の少ない材料や構造をつくることが大切です。</p>
+  <h4>シリコンの強み</h4>
+  <p>天然のシリコンには、雑音のもとになる核スピンをもつシリコン29が約5%含まれています。核スピンをもたないシリコン28を濃縮した材料を使うと雑音が大きく減り、量子の情報を長く保てます。</p>
+  <h4>技術モード：本物の量子技術で守る</h4>
+  <p>パルスの回転角には、わずかな誤差がつきものです。スピンの向きと同じ軸でパルスを打つ（CPMG）と誤差はたまりにくく、向きがわからない情報を守るには X と Y を交互に使う XY4 や XY8 が強い、という工夫が実際に使われています。</p>
+  <h4>フィルターで考える</h4>
+  <p>パルスの並びは、ある周波数のノイズだけを通す「フィルター」として働きます（フィルター関数）。ノイズの山とフィルターの山が重なると、パルスを増やしたのに逆効果になることも。わざと重ねれば、そのノイズを見つける超高感度のセンサーになります（量子センシング）。</p>
+</template>
+
+<template id="tplC">
+  <h3 id="exTitle">見破ったのは、2つの電子スピンの組み合わせ</h3>
+  <p>電子1個のスピンはとても小さな磁石なので、そのままでは測れません。そこで「電子が隣の箱へ移れるかどうか」にスピンの情報を置きかえ、そばに置いた電荷センサーで電子の移動を検出します。</p>
+  <h4>パウリの通せんぼ</h4>
+  <p>同じエネルギーの席には、同じ向きのスピンの電子は2つ入れません（パウリの排他原理）。反対向きのペア（シングレット、S）は右の箱にいっしょに入れますが、同じ向きのペア（トリプレット、T）は通せんぼされます。これをパウリ・スピン・ブロッケード（PSB）と呼びます。</p>
+  <h4>速さと正確さの綱引き</h4>
+  <p>信号には雑音があるので、長く見るほど確かになります。でも待っている間にトリプレットがシングレットに変わる（緩和する）と、読み間違えてしまいます。速く、しかも正確に読むことが研究の大きなテーマです。</p>
+  <h4>本物のデバイスでは</h4>
+  <p>読み出しはマイクロ秒（100万分の1秒）ほどの勝負です。センサーの信号を高周波で読む工夫などにより、シリコン量子ドットのスピンを速く正確に読み出す研究が進められています。</p>
+  <p class="fine">※トリプレットには3種類ありますが、ゲームでは同じ向きのペア（↑↑）で代表しています。</p>
+</template>
+
+<template id="tplC2">
+  <h3 id="exTitle">パルスの形が、読み出しの成否を決める</h3>
+  <p>電圧をサッと動かすか、ゆっくり動かすか。たったそれだけで、同じスピンでも読み出しは成功にも失敗にもなります。超上級で描いていたのは、その電圧の動かし方（パルス）そのものです。</p>
+  <h4>ピンクの線 ＝ サッと通る（ランダウ・ツェナー遷移）</h4>
+  <p>2つの状態のエネルギーがすれちがう場所を横切るとき、<b>ゆっくり通ると状態が入れかわり、サッと通ると入れかわらずに通り抜けます</b>。入れかわらない確率は P = exp(−2πΔ²/ℏv)。Δ は2つの状態のすきま、v は通る速さです。ピンクの線はすきまがとてもせまい場所（S と T₋ の反交差）なので、速く通れば無視できます。ゆっくり通ると、S がトリプレットに化けてしまいます。</p>
+  <h4>青い線 ＝ ゆっくり通る（電荷の反交差）</h4>
+  <p>式は同じですが、こちらはすきまがずっと広い場所です（2t<sub>c</sub>、t<sub>c</sub> はトンネル結合）。ゆっくり通れば電子はいちばん低い状態についていき、右の箱へ乗り移ります。急ぎすぎると取り残されて、本当は移れたはずの S が「通せんぼ」に見えてしまいます。ミッション4の「すれちがい地点」と同じしくみを、スピンの読み出しでやっていることになります。</p>
+  <h4>読み出しゾーンでの長居 ＝ 緩和（T₁）</h4>
+  <p>通せんぼされたトリプレットは、待っているうちにシングレットへ落ちていきます。深く入れるほど信号の差ははっきりしますが、落ちるのも早くなります。深さと待ち時間の兼ね合いが、読み出しの正確さを決めます。</p>
+  <h4>思ったより「なまる」パルス</h4>
+  <p>自分で描いた線（うすい線）と、実際に効いた線（濃い線）がずれていたのは、波形を作る装置や配線に速さの限界があるからです。どんなに急に描いても、ある速さより速くは動かせません。</p>
+  <p class="fine">※トリプレットは3種類あり、S と入れかわれるのはそのうち1種類（T₋）だけです。だから「ゆっくり通る」失敗は、S のほうがより大きく損をします。同じ場所を2回以上すれちがったときの干渉（シュテュッケルベルク振動）は省いています。本物のデバイスでは、トンネル結合 t<sub>c</sub> を大きくして、うまくいく速さの幅そのものを広げます。</p>
+</template>
+<template id="tplD">
+  <h3 id="exTitle">描いていたのは、量子ビットを操る「パルス」</h3>
+  <p>実験では、ゲート電極の電圧をナノ秒単位で変える「パルス」で量子ビットを操ります。あなたが描いた線は、まさにそのパルスです。</p>
+  <h4>すれちがい地点とランダウ・ツェナー遷移</h4>
+  <p>電子が左の箱にいる状態と右の箱にいる状態は、電圧を変えるとエネルギーが入れかわります。ちょうど真ん中で2つは近づきますが、トンネル結合のせいで交わらず、すき間（ギャップ）ができます。ここをゆっくり通ると電子は低い方の状態にそって移り（断熱的）、一気に通ると状態を変えずにすり抜けます（非断熱的）。すり抜ける確率は、通る速さで決まります（ランダウ・ツェナーの公式）。</p>
+  <h4>行って帰って、干渉させる</h4>
+  <p>半分すり抜ける速さで行って帰ると、2つの道すじの波が干渉します（ランダウ・ツェナー・シュテュッケルベルク干渉）。とどまる時間で波のずれ（位相）が変わるので、電子を完全に移したり、もとにもどしたりできます。すれちがい地点に一気に飛び込んで待つ方法（ラビ振動）でも同じ操作ができます。</p>
+  <h4>ミッション3とのつながり</h4>
+  <p>パウリスピン閉塞の読み出しでも、電圧をどの速さで動かすかで、スピンの状態を電荷の状態にうまく変換できるかが決まります。最後の100回の読み出しは、ミッション3で見たセンサーの判定をくり返したものです。</p>
+  <p class="fine">教育用シミュレーション：2準位のハミルトニアン H = (ε/2)σz + (Δ/2)σx を、描いたε(t)で数値的に解いています。時間の単位はナノ秒のつもりで、ゆっくり再生しています。</p>
+</template>
+<script>
+"use strict";
+/* ============ shared ============ */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const FONT = '"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",sans-serif';
+const FONTD = '"Dela Gothic One","Hiragino Sans","Yu Gothic",sans-serif';
+function gauss() { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('qlab:' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('qlab:' + k, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } }
+};
+let C = {};
+function readColors() {
+  const cs = getComputedStyle(document.documentElement);
+  ['ink', 'ink2', 'muted', 'wafer', 'panel', 'panel2', 'sub', 'line', 'gate', 'gate2', 'e', 'spin', 'ok', 'bad'].forEach(k => { C[k] = cs.getPropertyValue('--' + k).trim() || '#888888'; });
+}
+function hexA(hex, a) {
+  hex = (hex || '').trim();
+  if (hex[0] !== '#') return hex;
+  let n = hex.slice(1); if (n.length === 3) n = n.split('').map(c => c + c).join('');
+  const v = parseInt(n, 16);
+  return `rgba(${(v >> 16) & 255},${(v >> 8) & 255},${v & 255},${a})`;
+}
+function fit(cv) {
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const r = cv.getBoundingClientRect();
+  const w = Math.max(10, r.width), h = Math.max(10, r.height);
+  const W = Math.round(w * dpr), H = Math.round(h * dpr);
+  if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  return { ctx, w, h };
+}
+const fsz = (w, base) => Math.round(clamp(w / 720, 0.78, 1.3) * base);
+function rrect(ctx, x, y, w, h, r) {
+  r = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+function showOv(el, html, cls) { el.innerHTML = html; el.className = 'overlay show ' + (cls || ''); }
+function hideOv(el) { el.classList.remove('show'); }
+function buildLevels(el, names, onPick, key) {
+  el.innerHTML = ''; el.dataset.n = names.length;
+  names.forEach((n, k) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', k === 0 ? 'true' : 'false');
+    b.innerHTML = `<span class="lv-n">${n}</span><span class="lv-s" data-k="${key}" data-l="${k}">☆☆☆</span>`;
+    if (names.length === 6 && k === 3) { const sp = document.createElement('span'); sp.className = 'sep'; sp.setAttribute('aria-hidden', 'true'); el.appendChild(sp); }
+    b.addEventListener('click', () => { $$('button', el).forEach((x, j) => x.setAttribute('aria-checked', j === k ? 'true' : 'false')); sfx.play('tap'); onPick(k); });
+    el.appendChild(b);
+  });
+}
+function setUnlock(key, on) {
+  const b = $('#' + key.toLowerCase() + 'Explain'), m = $('#' + key.toLowerCase() + 'Lock');
+  b.disabled = !on; m.hidden = !!on;
+}
+const games = {};
+let current = 'home';
+function go(id) {
+  if (!document.getElementById(id)) return;
+  if (typeof result !== 'undefined') result.close();
+  if (games[current] && games[current].leave) games[current].leave();
+  $$('.screen').forEach(s => s.classList.toggle('is-active', s.id === id));
+  current = id;
+  readColors();
+  if (games[id] && games[id].enter) games[id].enter();
+  window.scrollTo(0, 0);
+}
+function arrow(ctx, x0, y0, x1, y1, head) {
+  const a = Math.atan2(y1 - y0, x1 - x0);
+  ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x1 + Math.cos(a) * head * 0.6, y1 + Math.sin(a) * head * 0.6);
+  ctx.lineTo(x1 + Math.cos(a + 2.5) * head, y1 + Math.sin(a + 2.5) * head);
+  ctx.lineTo(x1 + Math.cos(a - 2.5) * head, y1 + Math.sin(a - 2.5) * head);
+  ctx.closePath(); ctx.fill();
+}
+
+
+/* ============ sound: tiny Web Audio synth (no audio files) ============ */
+const sfx = (() => {
+  let ac = null, master = null, muted = !!store.get('mute', false), humO = null, humG = null, nbuf = null;
+  function ctx() {
+    if (!ac) {
+      const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
+      try { ac = new AC(); master = ac.createGain(); master.gain.value = 0.55; master.connect(ac.destination); } catch (e) { ac = null; return null; }
+    }
+    if (ac.state === 'suspended') { try { ac.resume(); } catch (e) { /* ignore */ } }
+    return ac;
+  }
+  const N = n => 440 * Math.pow(2, (n - 69) / 12);
+  function tone(f, t0, dur, o = {}) {
+    const osc = ac.createOscillator(), g = ac.createGain(), vol = o.vol || 0.1;
+    osc.type = o.type || 'sine';
+    osc.frequency.setValueAtTime(f, t0);
+    if (o.f2) osc.frequency.exponentialRampToValueAtTime(o.f2, t0 + dur);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol, t0 + (o.att || 0.006));
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    osc.connect(g); g.connect(master); osc.start(t0); osc.stop(t0 + dur + 0.03);
+  }
+  function noise(t0, dur, o = {}) {
+    if (!nbuf) { nbuf = ac.createBuffer(1, ac.sampleRate, ac.sampleRate); const d = nbuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
+    const s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain();
+    s.buffer = nbuf; fl.type = o.type || 'bandpass'; fl.Q.value = o.q || 1;
+    fl.frequency.setValueAtTime(o.f || 1000, t0); if (o.f2) fl.frequency.exponentialRampToValueAtTime(o.f2, t0 + dur);
+    g.gain.setValueAtTime(o.vol || 0.2, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    s.connect(fl); fl.connect(g); g.connect(master); s.start(t0); s.stop(t0 + dur + 0.02);
+  }
+  const arp = (t, notes, step, dur, o) => notes.forEach((n, k) => tone(N(n), t + k * step, dur, o));
+  const lib = {
+    tap: t => tone(N(84), t, 0.05, { type: 'square', vol: 0.04 }),
+    start: t => arp(t, [72, 76, 79, 84], 0.06, 0.14, { type: 'square', vol: 0.06 }),
+    count: t => tone(N(76), t, 0.12, { type: 'square', vol: 0.08 }),
+    go: t => { tone(N(88), t, 0.34, { type: 'square', vol: 0.07 }); tone(N(76), t, 0.34, { type: 'triangle', vol: 0.12 }); },
+    tick: t => tone(N(96), t, 0.035, { type: 'square', vol: 0.03 }),
+    warn: t => { tone(N(90), t, 0.08, { type: 'square', vol: 0.06 }); tone(N(90), t + 0.12, 0.08, { type: 'square', vol: 0.05 }); },
+    whirr: t => { tone(160, t, 0.46, { type: 'square', vol: 0.03, f2: 90 }); noise(t, 0.42, { vol: 0.05, f: 420, q: 3 }); },
+    ok: t => { tone(N(84), t, 0.09, { type: 'square', vol: 0.07 }); tone(N(91), t + 0.08, 0.26, { type: 'square', vol: 0.07 }); },
+    perfect: t => { arp(t, [84, 88, 91, 96], 0.055, 0.18, { type: 'square', vol: 0.06 }); tone(N(103), t + 0.24, 0.55, { vol: 0.07 }); tone(N(108), t + 0.3, 0.45, { vol: 0.05 }); },
+    miss: t => tone(330, t, 0.42, { type: 'sawtooth', vol: 0.05, f2: 80 }),
+    combo: (t, k) => arp(t, [79 + 2 * k, 86 + 2 * k], 0.05, 0.13, { type: 'triangle', vol: 0.12 }),
+    flip: t => { noise(t, 0.16, { vol: 0.16, f: 500, f2: 4200, q: 2.5 }); tone(N(81), t, 0.07, { type: 'triangle', vol: 0.1 }); },
+    echo: t => [1, 1.5, 2, 3].forEach((m, k) => tone(1046.5 * m, t + k * 0.045, 1.1 - k * 0.15, { vol: 0.055 })),
+    stamp: t => { tone(170, t, 0.2, { vol: 0.32, f2: 45 }); noise(t, 0.09, { vol: 0.22, f: 800, q: 0.6, type: 'lowpass' }); },
+    star: (t, k) => { tone(N(84 + 4 * (k || 0)), t, 0.42, { type: 'triangle', vol: 0.13 }); tone(N(96 + 4 * (k || 0)), t + 0.03, 0.3, { vol: 0.045 }); },
+    rank: t => { tone(N(55), t, 0.45, { type: 'triangle', vol: 0.16, f2: N(43) }); noise(t, 0.12, { vol: 0.14, f: 300, type: 'lowpass' }); },
+    fanfare: t => { arp(t, [72, 72, 72, 76], 0.1, 0.12, { type: 'square', vol: 0.05 }); arp(t + 0.42, [79, 84], 0.14, 0.5, { type: 'square', vol: 0.06 }); tone(N(64), t + 0.42, 0.75, { type: 'triangle', vol: 0.1 }); },
+    sad: t => arp(t, [67, 63, 60], 0.15, 0.22, { type: 'triangle', vol: 0.09 }),
+    lvup: t => arp(t, [72, 76, 79, 84, 88, 91, 96], 0.05, 0.2, { type: 'square', vol: 0.045 }),
+    gateOpen: t => tone(N(74), t, 0.09, { type: 'triangle', vol: 0.12, f2: N(81) }),
+    gateClose: t => tone(N(79), t, 0.08, { type: 'triangle', vol: 0.1, f2: N(70) }),
+    draw: t => tone(N(88), t, 0.03, { type: 'sine', vol: 0.03 }),
+    shot: (t, k) => tone(k ? N(91) : N(79), t, 0.03, { type: 'square', vol: 0.025 })
+  };
+  return {
+    play(name, arg) { if (muted) return; const a = ctx(); if (!a || !lib[name]) return; try { lib[name](a.currentTime + 0.01, arg); } catch (e) { /* ignore */ } },
+    hum(vol, freq) {
+      if (!ac) return;
+      if (muted) vol = 0;
+      if (!humO) { if (!vol) return; humO = ac.createOscillator(); humG = ac.createGain(); humO.type = 'triangle'; humG.gain.value = 0; humO.connect(humG); humG.connect(master); humO.start(); }
+      const t = ac.currentTime; humG.gain.setTargetAtTime(vol, t, 0.05); if (freq) humO.frequency.setTargetAtTime(freq, t, 0.03);
+    },
+    unlock() { if (!muted) ctx(); },
+    get muted() { return muted; },
+    setMuted(m) { muted = !!m; store.set('mute', muted); if (muted) this.hum(0); }
+  };
+})();
+
+/* ============ visual effects: popups, shake, particles ============ */
+const reduceMotion = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
+const fx = (() => {
+  const cv = $('#fxc'); let parts = [];
+  function burst(x, y, o = {}) {
+    if (reduceMotion) return;
+    const n = o.n || 24, cols = o.colors || [C.e, C.gate, C.spin, C.ok];
+    for (let k = 0; k < n; k++) {
+      const a = Math.random() * Math.PI * 2, sp = (o.speed || 280) * (0.35 + Math.random() * 0.8);
+      parts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - (o.up || 90), g: o.g == null ? 560 : o.g, life: 0, max: 0.6 + Math.random() * 0.6,
+        sz: (o.size || 6) * (0.6 + Math.random() * 0.8), col: cols[k % cols.length], rot: Math.random() * 6, vr: (Math.random() - 0.5) * 12,
+        sh: k % 3 === 0 ? 'star' : k % 3 === 1 ? 'rect' : 'dot' });
+    }
+    if (parts.length > 500) parts = parts.slice(-500);
+  }
+  function burstEl(el, px, py, o) { const r = el.getBoundingClientRect(); burst(r.left + r.width * px, r.top + r.height * py, o); }
+  function confetti(n) {
+    if (reduceMotion) return;
+    const w = innerWidth, cols = [C.e, C.gate, C.spin, C.ok, C.gate2];
+    for (let k = 0; k < n; k++) parts.push({ x: Math.random() * w, y: -20 - Math.random() * 260, vx: (Math.random() - 0.5) * 120, vy: 90 + Math.random() * 170, g: 50,
+      life: 0, max: 3.2 + Math.random() * 1.6, sz: 6 + Math.random() * 6, col: cols[k % 5], rot: Math.random() * 6, vr: (Math.random() - 0.5) * 10, sh: k % 4 ? 'rect' : 'star', sway: 1 + Math.random() * 6 });
+  }
+  function spark(ctx, s) {
+    ctx.beginPath();
+    for (let k = 0; k < 8; k++) { const r = k % 2 ? s * 0.38 : s, a = k * Math.PI / 4; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); }
+    ctx.closePath(); ctx.fill();
+  }
+  function frame(dt) {
+    if (!parts.length) { if (cv.width) { cv.width = 0; cv.height = 0; } return; }
+    const dpr = Math.min(2, window.devicePixelRatio || 1), W = innerWidth, H = innerHeight;
+    if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+    const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+    parts = parts.filter(q => (q.life += dt) < q.max && q.y < H + 40);
+    for (const q of parts) {
+      q.vy += q.g * dt; q.vx *= 1 - 0.9 * dt;
+      q.x += q.vx * dt + (q.sway ? Math.sin(q.life * 3 + q.sway) * 50 * dt : 0); q.y += q.vy * dt; q.rot += q.vr * dt;
+      ctx.globalAlpha = clamp((q.max - q.life) / 0.35, 0, 1); ctx.fillStyle = q.col;
+      ctx.save(); ctx.translate(q.x, q.y); ctx.rotate(q.rot);
+      if (q.sh === 'rect') ctx.fillRect(-q.sz / 2, -q.sz * 0.3, q.sz, q.sz * 0.6);
+      else if (q.sh === 'star') spark(ctx, q.sz * 0.9);
+      else { ctx.beginPath(); ctx.arc(0, 0, q.sz / 2, 0, Math.PI * 2); ctx.fill(); }
+      ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+  }
+  function pop(box, text, xp, yp, cls) {
+    const s = document.createElement('span');
+    s.className = 'pop ' + (cls || ''); s.textContent = text; s.style.left = xp + '%'; s.style.top = yp + '%';
+    box.appendChild(s); setTimeout(() => s.remove(), 1350);
+  }
+  function shake(el) { if (reduceMotion) return; el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); setTimeout(() => el.classList.remove('shake'), 450); }
+  return { burst, burstEl, confetti, frame, pop, shake, spark };
+})();
+const attn = (b, on) => b.classList.toggle('attn', !!on);
+function bump(el) { el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+const starStr = n => '★'.repeat(n) + '☆'.repeat(3 - n);
+
+/* ============ progress: stars, titles, local ranking ============ */
+const TITLES = [[0, '見習い研究員'], [5, '量子研究員'], [15, '量子エンジニア'], [30, '量子博士'], [45, '量子マスター']];
+const LVNAMES = {
+  A: ['初級', '中級', '上級', '迷路1', '迷路2', '迷路3'],
+  B: ['初級', '中級', '上級', '技術1', '技術2', '技術3'],
+  C: ['初級', '中級', '上級', '超上級'],
+  D: ['課題1', '課題2', '課題3', '課題4']
+};
+const STAR_MAX = Object.values(LVNAMES).reduce((a, v) => a + v.length * 3, 0);
+const prog = {
+  stars(k, l) { return store.get('star' + k + l, 0); },
+  total() { let s = 0; for (const k in LVNAMES) for (let l = 0; l < LVNAMES[k].length; l++) s += this.stars(k, l); return s; },
+  title(n) { let t = TITLES[0][1]; TITLES.forEach(([m, s]) => { if (n >= m) t = s; }); return t; },
+  record(k, l, st) {
+    const before = this.total();
+    if (st > this.stars(k, l)) store.set('star' + k + l, st);
+    const after = this.total();
+    this.render();
+    return { before, after, up: this.title(after) !== this.title(before) };
+  },
+  render() {
+    const n = this.total(), nx = TITLES.find(([m]) => m > n);
+    $('#pgStars').textContent = n; $('#pgTitle').textContent = this.title(n); $('#starChip b').textContent = n;
+    $('#pgNext').textContent = nx ? `あと${nx[0] - n}個で「${nx[1]}」` : 'ぜんぶ集めた！ あなたは量子マスター';
+    $('#pgFill').style.width = (n / STAR_MAX * 100) + '%';
+    $('#pgMax').textContent = STAR_MAX;
+    $$('[data-stars]').forEach(el => {
+      const k = el.dataset.stars, L = LVNAMES[k], grp = (lab, a, b) => `<span>${lab}<em>${L.slice(a, b).map((_, j) => starStr(this.stars(k, a + j))).join(' ')}</em></span>`;
+      el.innerHTML = k === 'A' ? grp('基本', 0, 3) + grp('迷路', 3, 6) : k === 'B' ? grp('基本', 0, 3) + grp('技術', 3, 6) : k === 'D' ? grp('課題', 0, 4) : grp('基本', 0, 3) + grp('超上級', 3, 4);
+    });
+    $$('.lv-s').forEach(el => { el.textContent = starStr(this.stars(el.dataset.k, +el.dataset.l)); });
+  }
+};
+const boardStore = {
+  get(k, l) { const b = store.get('rank' + k + l, []); return Array.isArray(b) ? b : []; },
+  qualifies(k, l, s) { const b = this.get(k, l); return s > 0 && (b.length < 5 || s > b[b.length - 1].s); },
+  add(k, l, name, s) {
+    const b = this.get(k, l), d = Date.now() + Math.random();
+    b.push({ n: name, s, d }); b.sort((a, c) => c.s - a.s || a.d - c.d);
+    store.set('rank' + k + l, b.slice(0, 5)); return d;
+  }
+};
+
+/* ============ result screen ============ */
+const result = (() => {
+  const el = $('#result'); let tm = [], cur = null;
+  const later = (f, ms) => tm.push(setTimeout(f, ms));
+  function close() { tm.forEach(clearTimeout); tm = []; el.hidden = true; cur = null; }
+  function board(o, me) {
+    const ol = $('#rsBoard'); ol.innerHTML = '';
+    boardStore.get(o.key, o.lv).forEach(e => {
+      const li = document.createElement('li'); if (me && e.d === me) li.className = 'me';
+      const s = document.createElement('span'); s.textContent = e.n;
+      const b = document.createElement('b'); b.textContent = o.fmt(e.s);
+      li.append(s, b); ol.appendChild(li);
+    });
+  }
+  function save() {
+    if (!cur || $('#rsEntry').hidden) return;
+    const o = cur, n = ($('#rsName').value || '').replace(/\s+/g, ' ').trim().slice(0, 8) || 'ななし';
+    const d = boardStore.add(o.key, o.lv, n, o.score);
+    $('#rsEntry').hidden = true; board(o, d); sfx.play('ok');
+    const r = $('#rsRetry'); if (r) r.focus({ preventScroll: true });
+  }
+  function open(o) {
+    close(); cur = o; o.fmt = o.fmt || (v => v + '点');
+    $('#rsMis').textContent = `${o.mission}・${LVNAMES[o.key][o.lv]}`;
+    const rk = $('#rsRank'); rk.textContent = o.rank; rk.className = 'rs-rank r-' + o.rank;
+    $('#rsTitle').textContent = o.title; $('#rsSub').textContent = o.sub;
+    const tip = $('#rsTip'); tip.innerHTML = ''; tip.hidden = !o.tip;
+    if (o.tip) { const b = document.createElement('b'); b.textContent = 'ヒント'; tip.append(b, document.createTextNode(o.tip)); }
+    const stars = $$('#rsStars i'); stars.forEach(s => { s.className = ''; });
+    $('#rsScore').textContent = o.fmt(0); $('#rsNew').hidden = true; $('#rsLvup').hidden = true;
+    const pr = prog.record(o.key, o.lv, o.stars), q = boardStore.qualifies(o.key, o.lv, o.score);
+    $('#rsEntry').hidden = true; $('#rsName').value = ''; board(o, null);
+    $('#rsNext').hidden = !o.next;
+    $('#rsRetry').onclick = () => { close(); o.retry(); };
+    $('#rsNext').onclick = () => { close(); if (o.next) o.next(); };
+    $('#rsExplain').onclick = () => openExplain(o.exKey || o.key);
+    el.hidden = false; el.scrollTop = 0;
+    const t0 = performance.now() + 150, D = 750;
+    const step = () => {
+      if (cur !== o) return;
+      const k = clamp((performance.now() - t0) / D, 0, 1);
+      $('#rsScore').textContent = o.fmt(Math.round(o.score * (1 - Math.pow(1 - k, 3))));
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+    for (let k = 0; k < o.stars; k++) later(() => {
+      stars[k].className = 'on'; sfx.play('star', k);
+      fx.burstEl(stars[k], 0.5, 0.5, { n: 14, speed: 190, size: 5, up: 40, colors: [C.gate, C.gate2, C.e] });
+    }, 950 + k * 270);
+    const tr = 950 + o.stars * 270 + 220;
+    later(() => {
+      rk.classList.add('show'); sfx.play('rank');
+      if (o.rank === 'S') { later(() => sfx.play('fanfare'), 200); fx.confetti(170); }
+      else if (o.rank === 'A') { later(() => sfx.play('fanfare'), 200); fx.confetti(70); }
+      else if (o.stars === 0) later(() => sfx.play('sad'), 250);
+      if (o.rec) $('#rsNew').hidden = false;
+    }, tr);
+    if (pr.up) later(() => { const l = $('#rsLvup'); l.textContent = `称号アップ！「${prog.title(pr.after)}」になった！`; l.hidden = false; sfx.play('lvup'); }, tr + 800);
+    later(() => {
+      if (q) $('#rsEntry').hidden = false;
+      let fine = true; try { fine = !matchMedia('(pointer: coarse)').matches; } catch (e) { /* ignore */ }
+      if (fine) (q ? $('#rsName') : $('#rsRetry')).focus({ preventScroll: true });
+    }, tr + 350);
+  }
+  $('#rsSave').addEventListener('click', save);
+  $('#rsName').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); save(); } });
+  $('#rsClose').addEventListener('click', close);
+  return { open, close, get isOpen() { return !el.hidden; } };
+})();
+
+/* ============ GAME A: move the electron (double quantum dot charge qubit) ============
+   Two-level model: |L>, |R>.  H = (eps/2) sz + tc sx   (hbar = 1, time in game seconds)
+   Bloch vector r, z = P_L - P_R.  dr/dt = Omega x r, Omega = (2 tc, 0, eps)
+   Relaxation / dephasing in the instantaneous eigenbasis. */
+function stepBloch(r, tc, eps, g1, gphi, h) {
+  const ox = 2 * tc, oz = eps, om = Math.hypot(ox, oz);
+  if (om < 1e-9) { const e2 = Math.exp(-gphi * h); r.x *= e2; r.y *= e2; return; }
+  const nx = ox / om, nz = oz / om, ang = om * h, c = Math.cos(ang), s = Math.sin(ang);
+  const dot = nx * r.x + nz * r.z;
+  const cx = -nz * r.y, cy = nz * r.x - nx * r.z, cz = nx * r.y;
+  let x = r.x * c + cx * s + nx * dot * (1 - c);
+  let y = r.y * c + cy * s;
+  let z = r.z * c + cz * s + nz * dot * (1 - c);
+  const G1 = g1 * nx * nx, G2 = gphi + G1 / 2;
+  const par = nx * x + nz * z;
+  const px = x - par * nx, pz = z - par * nz;
+  const npar = -1 + (par + 1) * Math.exp(-G1 * h), e2 = Math.exp(-G2 * h);
+  r.x = npar * nx + px * e2; r.y = y * e2; r.z = npar * nz + pz * e2;
+}
+
+/* ============ maze physics: N quantum dots, tight-binding, RK4 ============ */
+const MAZES = {
+  3: [
+    ['S-o o', '  | |', 'o-o-o', '|   |', 'o o-G'],
+    ['S-o-o', '  |  ', 'o-o o', '|   |', 'o-o-G'],
+    ['S o-o', '| | |', 'o-o o', '    |', 'o-o G']
+  ],
+  4: [
+    ['S-o-x-o', '|     |', 'o-o o G', '  | | |', 'o-o-o-o'],
+    ['S-o-o-o', '|   | |', 'o-o-x o', '|   | |', 'o-o-o-G']
+  ],
+  5: [
+    ['S-o-o-o', '|     |', 'o x-o o', '| | | |', 'o-o x-o', '    | |', 'o-o-o-G'],
+    ['S o-o-o', '| |   |', 'o-o x o', '  | | |', 'o-o-o o', '|     |', 'o-x-o-G']
+  ]
+};
+function parseMaze(rows) {
+  const W = Math.max(...rows.map(r => r.length));
+  rows = rows.map(r => r.padEnd(W, ' '));
+  const R = (rows.length + 1) / 2, Cn = (W + 1) / 2, type = [], links = [];
+  let s = 0, g = 0;
+  for (let r = 0; r < R; r++) for (let c = 0; c < Cn; c++) {
+    const ch = rows[2 * r][2 * c], i = r * Cn + c;
+    type.push(ch === 'x' ? 'x' : ch === 'S' ? 'S' : ch === 'G' ? 'G' : 'o');
+    if (ch === 'S') s = i; if (ch === 'G') g = i;
+    if (c < Cn - 1 && rows[2 * r][2 * c + 1] === '-') links.push({ a: i, b: i + 1, open: false });
+    if (r < R - 1 && rows[2 * r + 1][2 * c] === '|') links.push({ a: i, b: i + Cn, open: false });
+  }
+  return { R, C: Cn, n: R * Cn, type, links, s, g };
+}
+function mazeStepper(n) {
+  const k = [0, 1, 2, 3].map(() => ({ r: new Float64Array(n), i: new Float64Array(n) })), tr = new Float64Array(n), ti = new Float64Array(n);
+  function deriv(re, im, eps, links, tl, out) { // out = -i H psi
+    for (let j = 0; j < n; j++) { out.r[j] = eps[j] * im[j]; out.i[j] = -eps[j] * re[j]; }
+    for (const L of links) if (L.open) {
+      out.r[L.a] += tl * im[L.b]; out.i[L.a] -= tl * re[L.b];
+      out.r[L.b] += tl * im[L.a]; out.i[L.b] -= tl * re[L.a];
+    }
+  }
+  return function step(re, im, eps, links, tl, h) {
+    deriv(re, im, eps, links, tl, k[0]);
+    for (let j = 0; j < n; j++) { tr[j] = re[j] + 0.5 * h * k[0].r[j]; ti[j] = im[j] + 0.5 * h * k[0].i[j]; }
+    deriv(tr, ti, eps, links, tl, k[1]);
+    for (let j = 0; j < n; j++) { tr[j] = re[j] + 0.5 * h * k[1].r[j]; ti[j] = im[j] + 0.5 * h * k[1].i[j]; }
+    deriv(tr, ti, eps, links, tl, k[2]);
+    for (let j = 0; j < n; j++) { tr[j] = re[j] + h * k[2].r[j]; ti[j] = im[j] + h * k[2].i[j]; }
+    deriv(tr, ti, eps, links, tl, k[3]);
+    for (let j = 0; j < n; j++) {
+      re[j] += h / 6 * (k[0].r[j] + 2 * k[1].r[j] + 2 * k[2].r[j] + k[3].r[j]);
+      im[j] += h / 6 * (k[0].i[j] + 2 * k[1].i[j] + 2 * k[2].i[j] + k[3].i[j]);
+    }
+  };
+}
+function mazePath(M) { // BFS shortest path avoiding traps (for hints/tests)
+  const adj = Array.from({ length: M.n }, () => []);
+  M.links.forEach(L => { adj[L.a].push(L.b); adj[L.b].push(L.a); });
+  const prev = new Array(M.n).fill(-1), seen = new Array(M.n).fill(false), q = [M.s]; seen[M.s] = true;
+  while (q.length) { const u = q.shift(); for (const v of adj[u]) if (!seen[v] && M.type[v] !== 'x') { seen[v] = true; prev[v] = u; q.push(v); } }
+  if (!seen[M.g]) return null;
+  const p = [M.g]; while (p[0] !== M.s) p.unshift(prev[p[0]]); return p;
+}
+
+games.gA = (() => {
+  const LV = [
+    { tilt: false, gphi: 0, g1: 0, off: 0, perf: 0.95,
+      intro: '左の箱にいる電子を、右の箱へ運ぼう。カギは壁ゲートのつまみです。',
+      hint: '壁を下げると、右にいる確率が上がったり下がったりします。いちばん高い瞬間に「測定する」を押そう。' },
+    { tilt: false, gphi: 0.28, g1: 0.08, off: 0, perf: 0.83,
+      intro: 'まわりの電荷のゆらぎ（ノイズ）があるレベル。電子のゆれがだんだんぼやけていきます。',
+      hint: 'ノイズで振動はどんどんぼやけます。壁を一気に下げて、最初の山で素早くつかもう。' },
+    { tilt: true, gphi: 0.3, g1: 0.3, off: 1.8, perf: 0.93,
+      intro: '傾きゲートも使えます。ノイズに加えて、毎回ちがう「見えないずれ」があるので要注意。',
+      hint: 'ずれとノイズのせいで、タイミング作戦は当たりはずれが大きめ。先に壁を下げてから、傾きをゆっくり右へ動かしてみよう。' },
+    { maze: true, sigma: 0, sq: 0, perf: 0.95,
+      intro: '量子ドットの迷路！ 金色のゲートをタップすると開いたり閉じたりします。電子を S から G まで運ぼう。',
+      hint: 'ゲートを1つ開けて、となりの箱に移りきったら（約1秒）すぐ閉じる。これをくり返そう。行き止まりのゲートは開けないこと。' },
+    { maze: true, sigma: 0.25, sq: 0.1, perf: 0.88,
+      intro: '「!」の箱はエネルギーがずれた落とし穴。電子がうまく移れません。ノイズも少しあります。',
+      hint: '落とし穴を通る近道より、遠回りでも安全な道が確実。移り終わったゲートはすぐ閉じよう。' },
+    { maze: true, sigma: 0.4, sq: 0.2, perf: 0.75,
+      intro: '大きな迷路。ノイズが強いので、時間をかけるほど電子の波がくずれます。すばやく運ぼう。',
+      hint: 'まっすぐ3つ並んだ箱は、2つのゲートを同時に開けて約1.5秒待つと、一気に端まで運べます（量子の近道）。' }
+  ];
+  const LIMIT_M = 30, ROUNDS_M = 3, TL = 1.5, EX = 4;
+  const T_MAX = 1.5, E_MAX = 12, ROUNDS = 5, LIMIT = 10, GRAB = 480, DONE = 1150;
+  const tiltMap = s => 0.35 * s + 0.65 * s * s * s; // fine control near the middle
+  const cv = $('#cvA'), cv2 = $('#cvA2'), bar = $('#aBar'), tilt = $('#aTilt'), main = $('#aMain'),
+    st = $('#aStatus'), log = $('#aLog'), ov = $('#aOv'), box = cv.parentElement, stage = cv.closest('.stage');
+  let lv = 0, state = 'idle', round = 0, score = 0, nOk = 0, nPerf = 0, streak = 0, maxStreak = 0,
+    r = { x: 0, y: 0, z: 1 }, t = 0, off = 0, hist = [], coll = null, claw = null, token = 0,
+    lastAct = 0, busyUntil = 0, flash = 0, clock = 0, lastSec = 0, blinkT = 2.5,
+    M = null, mzRe = null, mzIm = null, mzEps = null, mzNoi = null, mzQ = null, mzStep = null, mzLast = -1, mzFound = -1, mzFrom = null, geo = null;
+  const isMaze = () => !!LV[lv].maze, rounds = () => isMaze() ? ROUNDS_M : ROUNDS, lim = () => isMaze() ? LIMIT_M : LIMIT;
+  const mzP = i => mzRe[i] * mzRe[i] + mzIm[i] * mzIm[i];
+  const pNow = () => isMaze() ? (M ? clamp(mzP(M.g), 0, 1) : 0) : pR();
+  const easeIn = q => q * q, easeOut = q => 1 - (1 - q) * (1 - q), easeIO = q => q < 0.5 ? 2 * q * q : 1 - Math.pow(-2 * q + 2, 2) / 2;
+
+  const coupling = () => { const v = bar.value / 1000; return T_MAX * (Math.exp(4 * v) - 1) / (Math.exp(4) - 1); };
+  const tiltVal = () => LV[lv].tilt ? tiltMap(tilt.value / 1000) : 0;
+  const detuning = () => E_MAX * tiltVal() + off;
+  const pR = () => clamp((1 - r.z) / 2, 0, 1);
+  const setSliders = on => { bar.disabled = !on; tilt.disabled = !on; };
+
+  function hud() {
+    $('#aRound').textContent = clamp(round, 1, rounds()) + '/' + rounds();
+    $('#aScore').textContent = score;
+    const b = store.get('A' + lv, null);
+    $('#aBest').textContent = b == null ? '—' : b;
+    const cb = $('#aCombo'); cb.textContent = streak; cb.parentElement.classList.toggle('hot', streak >= 2);
+  }
+  function reset() {
+    token++; state = 'idle'; round = 0; score = 0; nOk = 0; nPerf = 0; streak = 0; maxStreak = 0;
+    r = { x: 0, y: 0, z: 1 }; t = 0; hist = []; off = 0; coll = null; claw = null; busyUntil = 0;
+    bar.value = 0; tilt.value = LV[lv].tilt ? -1000 : 0;
+    $('#aTiltWrap').hidden = !LV[lv].tilt;
+    $('#aBarWrap').hidden = isMaze(); $('#aMazeCtl').hidden = !isMaze();
+    M = null; mzFrom = null; mzFound = -1;
+    if (isMaze()) { M = parseMaze(MAZES[lv][0]); mzInit(); }
+    setSliders(false); log.innerHTML = ''; main.disabled = false; main.textContent = 'スタート'; attn(main, true);
+    st.textContent = LV[lv].intro; hideOv(ov); sfx.hum(0); hud();
+  }
+  function mzInit() {
+    const n = M.n; mzRe = new Float64Array(n); mzIm = new Float64Array(n); mzRe[M.s] = 1;
+    mzEps = new Float64Array(n); mzNoi = new Float64Array(n); mzQ = new Float64Array(n); mzStep = mazeStepper(n);
+    for (let j = 0; j < n; j++) { mzNoi[j] = LV[lv].sigma * gauss(); mzQ[j] = LV[lv].sq * gauss(); }
+  }
+  function startRound() {
+    token++; round++; r = { x: 0, y: 0, z: 1 }; t = 0; hist = [{ t: 0, p: 0 }];
+    if (isMaze()) {
+      const opts = MAZES[lv]; let k = Math.floor(Math.random() * opts.length);
+      if (opts.length > 1 && k === mzLast) k = (k + 1) % opts.length;
+      mzLast = k; M = parseMaze(opts[k]); mzInit(); mzFrom = null; mzFound = -1;
+    }
+    off = LV[lv].off * gauss(); coll = null; claw = null; lastSec = 0;
+    bar.value = 0; tilt.value = LV[lv].tilt ? -1000 : 0;
+    setSliders(true); state = 'run'; main.disabled = false; main.textContent = '測定する'; attn(main, false);
+    st.textContent = isMaze() ? `ラウンド${round}：電子が S の箱に入りました。ゲートを開け閉めして G へ運び、「測定する」。`
+      : `ラウンド${round}：電子が左の箱に入りました。つまみを動かして、ここだと思ったら「測定する」。`;
+    hideOv(ov); hud(); sfx.play(round === 1 ? 'start' : 'tap');
+  }
+  function measure(auto) {
+    const p = pNow(), ok = Math.random() < p, perfect = ok && p >= LV[lv].perf;
+    if (isMaze()) {
+      mzFrom = Array.from({ length: M.n }, (_, i) => mzP(i));
+      if (ok) mzFound = M.g;
+      else { let u = Math.random() * Math.max(1e-9, 1 - p), k = -1; for (let i = 0; i < M.n; i++) { if (i === M.g) continue; u -= mzFrom[i]; k = i; if (u <= 0) break; } mzFound = k; }
+      M.links.forEach(L => { L.open = false; });
+    }
+    streak = ok ? streak + 1 : 0; maxStreak = Math.max(maxStreak, streak);
+    const mult = ok ? 1 + 0.1 * Math.min(streak - 1, 4) : 0;
+    const bonus = ok ? Math.round(50 * Math.max(0, 1 - t / (isMaze() ? 16 : 6))) : 0;
+    const pts = ok ? Math.round((100 + bonus + (perfect ? 30 : 0)) * mult) : 0;
+    score += pts; if (ok) nOk++; if (perfect) nPerf++;
+    const now = performance.now(), my = ++token, last = round >= rounds(), tt = t;
+    claw = { t0: now, ok }; coll = { from: p, to: ok ? 1 : 0, t0: now + GRAB };
+    setSliders(false); state = 'claw'; main.disabled = true; busyUntil = now + DONE;
+    sfx.hum(0); sfx.play('whirr');
+    let msg = auto ? '時間切れで自動的に測定しました。' : '';
+    if (p < 0.75) msg += LV[lv].hint;
+    else if (!ok) msg += '確率は高かったのに左で見つかりました。これが量子の「運」。作戦は合っています！';
+    else msg += p >= LV[lv].perf ? 'ねらいどおり！ 見事な運び方です。' : '成功！ もっと確率を上げる作戦もあるかも。';
+    st.textContent = 'センサーUFOが確認中…';
+    setTimeout(() => {
+      if (my !== token) return;
+      flash = 1;
+      const li = document.createElement('li');
+      li.innerHTML = `<span>${round}回目<small>${isMaze() ? 'ゴール' : '右'}の確率 ${Math.round(p * 100)}%・${tt.toFixed(1)}秒${perfect ? '・PERFECT' : ''}</small></span><span class="${ok ? 'ok' : 'ng'}">${ok ? '+' + pts : '左にいた'}</span>`;
+      log.appendChild(li);
+      if (ok) {
+        sfx.play(perfect ? 'perfect' : 'ok');
+        fx.pop(box, '+' + pts, 50, 54, 'good');
+        if (perfect) fx.pop(box, 'PERFECT!', 50, 71, 'perfect');
+        if (streak >= 2) { fx.pop(box, streak + ' COMBO!', 22, 72, 'combo'); setTimeout(() => sfx.play('combo', Math.min(streak, 6)), 220); }
+        fx.burstEl(cv, 0.7, 0.45, { n: perfect ? 46 : 26 });
+      } else {
+        sfx.play('miss'); fx.shake(stage);
+        fx.pop(box, p >= 0.75 ? 'おしい！' : 'スカッ…', 50, 54, 'bad');
+      }
+      const detail = ok ? `+${pts}点（速さ +${bonus}${perfect ? '・PERFECT +30' : ''}${mult > 1 ? `・コンボ ×${mult.toFixed(1)}` : ''}）`
+        : `このとき${isMaze() ? 'ゴール' : '右'}にいる確率は ${Math.round(p * 100)}% でした`;
+      showOv(ov, ok ? `${isMaze() ? 'ゴール' : '右'}で見つかった！<small>${detail}</small>` : `${isMaze() ? 'ちがう箱' : '左'}にいた…<small>${detail}</small>`, ok ? 'good' : 'bad');
+      st.textContent = msg; hud(); bump($('#aScore')); if (streak >= 2) bump($('#aCombo'));
+    }, GRAB);
+    setTimeout(() => {
+      if (my !== token) return;
+      main.disabled = false;
+      if (last) finish(msg);
+      else { state = 'result'; main.textContent = '次のラウンドへ'; attn(main, true); }
+    }, DONE);
+  }
+  const pick = k => { const b = $$('#aLv button')[k]; if (b) b.click(); };
+  function finish(msg) {
+    state = 'done';
+    const best = store.get('A' + lv, 0), rec = score > best;
+    if (rec) store.set('A' + lv, score);
+    store.set('unlockA', true); setUnlock('A', true);
+    main.textContent = 'もう一度'; attn(main, true);
+    const RN = rounds();
+    st.innerHTML = `<b>合計 ${score}点</b>（${RN}回中 ${nOk}回成功）。${rec ? 'ベスト更新！ ' : ''}${msg}<br>「しくみを見る」で、いま何が起きていたかを確かめよう。`;
+    hud();
+    const stars = isMaze() ? nOk : nOk >= 5 ? 3 : nOk >= 4 ? 2 : nOk >= 3 ? 1 : 0;
+    const rank = stars === 3 && nPerf >= (isMaze() ? 2 : 3) ? 'S' : ['C', 'C', 'B', 'A'][stars];
+    const tip = rank === 'S' ? 'かんぺき！ ほかのレベルやミッションにも挑戦しよう。'
+      : stars === 3 ? `${isMaze() ? 'ゴール' : '右'}の確率${Math.round(LV[lv].perf * 100)}%以上でつかむと PERFECT。${isMaze() ? 2 : 3}回以上で Sランク！ ` + LV[lv].hint : LV[lv].hint;
+    result.open({
+      key: 'A', lv, mission: 'ミッション1 運ぶ', score, stars, rank, rec,
+      title: { S: '神わざキャッチ！', A: '名人級の運び屋！', B: 'なかなかの腕前！', C: 'つぎはもっと運べる！' }[rank],
+      sub: `${RN}回中 ${nOk}回成功・PERFECT ${nPerf}回・最大 ${maxStreak}コンボ`,
+      tip, retry: () => { reset(); startRound(); }, next: lv < LV.length - 1 ? () => { pick(lv + 1); startRound(); } : null
+    });
+  }
+  function act() {
+    const now = performance.now(); if (now - lastAct < 250 || now < busyUntil) return; lastAct = now;
+    if (state === 'idle' || state === 'result') startRound();
+    else if (state === 'run') measure(false);
+    else if (state === 'done') { reset(); startRound(); }
+  }
+  main.addEventListener('click', act);
+  buildLevels($('#aLv'), LVNAMES.A, k => { lv = k; reset(); }, 'A');
+  cv.addEventListener('pointerdown', e => {
+    if (!isMaze() || state !== 'run' || !geo) return;
+    const rc = cv.getBoundingClientRect(), x = e.clientX - rc.left, y = e.clientY - rc.top;
+    let best = -1, bd = geo.cell * 0.42;
+    M.links.forEach((L, i) => { const a = geo.P(L.a), b = geo.P(L.b), d = Math.hypot(x - (a.x + b.x) / 2, y - (a.y + b.y) / 2); if (d < bd) { bd = d; best = i; } });
+    if (best < 0) return;
+    e.preventDefault();
+    const L = M.links[best]; L.open = !L.open; sfx.play(L.open ? 'gateOpen' : 'gateClose');
+  });
+  $('#aCloseAll').addEventListener('click', () => { if (M && state === 'run') { M.links.forEach(L => { L.open = false; }); sfx.play('gateClose'); } });
+  $('#aExplain').addEventListener('click', () => openExplain('A'));
+
+  function face(ctx, cx, cy, rr, a, mood, blink) {
+    const al = clamp((a - 0.15) / 0.35, 0, 1); if (al <= 0) return;
+    ctx.save(); ctx.globalAlpha = al; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    const ex = rr * 0.23, ey = cy - rr * 0.08, er = Math.max(3.5, rr * 0.11), lw = Math.max(2, rr * 0.055);
+    ctx.lineWidth = lw; ctx.strokeStyle = '#1b1d2e'; ctx.fillStyle = '#1b1d2e';
+    [-1, 1].forEach(s => {
+      const x = cx + s * ex;
+      if (mood === 'happy') { ctx.beginPath(); ctx.arc(x, ey + er * 0.5, er, Math.PI * 1.15, Math.PI * 1.85); ctx.stroke(); }
+      else if (mood === 'sad') { ctx.beginPath(); ctx.moveTo(x - er * 0.8 * s, ey - er * 0.8); ctx.lineTo(x + er * 0.6 * s, ey); ctx.lineTo(x - er * 0.8 * s, ey + er * 0.8); ctx.stroke(); }
+      else if (blink) { ctx.beginPath(); ctx.moveTo(x - er, ey); ctx.lineTo(x + er, ey); ctx.stroke(); }
+      else {
+        ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.ellipse(x, ey, er, er * 1.25, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#1b1d2e'; ctx.beginPath(); ctx.arc(x + er * 0.35, ey + er * 0.1, er * 0.6, 0, Math.PI * 2); ctx.fill();
+      }
+    });
+    const my = cy + rr * 0.2;
+    ctx.beginPath();
+    if (mood === 'happy') { ctx.fillStyle = '#1b1d2e'; ctx.arc(cx, my - rr * 0.02, rr * 0.13, 0, Math.PI); ctx.fill(); }
+    else if (mood === 'sad') { ctx.arc(cx, my + rr * 0.08, rr * 0.09, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke(); }
+    else { ctx.arc(cx, my - rr * 0.03, rr * 0.08, Math.PI * 0.15, Math.PI * 0.85); ctx.stroke(); }
+    ctx.restore();
+  }
+  function drawUFO(ctx, ux, uy, uw) {
+    const uh = uw * 0.34;
+    ctx.fillStyle = hexA(C.spin, 0.45); ctx.beginPath(); ctx.ellipse(ux, uy - uh * 0.3, uw * 0.45, uh * 1.05, 0, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = C.ink; ctx.beginPath(); ctx.ellipse(ux, uy, uw, uh * 0.55, 0, 0, Math.PI * 2); ctx.fill();
+    for (let k = -2; k <= 2; k++) {
+      ctx.fillStyle = ((Math.floor(clock * 5) + k) & 1) ? C.gate2 : C.e;
+      ctx.beginPath(); ctx.arc(ux + k * uw * 0.36, uy + uh * 0.05, Math.max(2, uh * 0.16), 0, Math.PI * 2); ctx.fill();
+    }
+    if (flash > 0.01) { ctx.strokeStyle = hexA(C.e, flash); ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(ux, uy, uw + 14 * (1 - flash), uh + 10 * (1 - flash), 0, 0, Math.PI * 2); ctx.stroke(); }
+  }
+  function drawMaze(ctx, w, h, now) {
+    const padT = h * 0.1, padB = h * 0.08, padX = w * 0.08;
+    const cell = Math.min((w - 2 * padX) / (M.C - 1 + 0.9), (h - padT - padB) / (M.R - 1 + 0.9));
+    const ox = w / 2 - (M.C - 1) * cell / 2, oy = padT + (h - padT - padB) / 2 - (M.R - 1) * cell / 2;
+    const P = i => ({ x: ox + (i % M.C) * cell, y: oy + Math.floor(i / M.C) * cell });
+    geo = { cell, P };
+    const rd = cell * 0.3;
+    let probs = Array.from({ length: M.n }, (_, i) => mzP(i));
+    if (mzFrom && claw) {
+      const q = clamp((now - claw.t0 - GRAB) / 320, 0, 1), e = 1 - Math.pow(1 - q, 3);
+      probs = mzFrom.map((v, i) => v + ((i === mzFound ? 1 : 0) - v) * e);
+    }
+    // channels
+    ctx.lineCap = 'round';
+    M.links.forEach(L => { const a = P(L.a), b = P(L.b); ctx.strokeStyle = C.sub; ctx.lineWidth = rd * 0.95; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); });
+    // open tunnels
+    M.links.forEach(L => {
+      if (!L.open) return;
+      const a = P(L.a), b = P(L.b);
+      ctx.save(); ctx.setLineDash([5, 7]); ctx.lineDashOffset = -clock * 30; ctx.strokeStyle = hexA(C.e, 0.75); ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); ctx.restore();
+    });
+    // dots
+    for (let i = 0; i < M.n; i++) {
+      const c = P(i), tp = M.type[i];
+      ctx.fillStyle = tp === 'x' ? hexA(C.bad, 0.2) : C.panel;
+      ctx.beginPath(); ctx.arc(c.x, c.y, rd, 0, Math.PI * 2); ctx.fill();
+      ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = tp === 'x' ? C.bad : C.ink2; ctx.lineWidth = 1.5; ctx.stroke(); ctx.restore();
+      if (tp === 'x') { ctx.fillStyle = C.bad; ctx.font = `400 ${Math.round(rd * 0.9)}px ${FONTD}`; ctx.textAlign = 'center'; ctx.fillText('!', c.x, c.y + rd * 0.32); }
+    }
+    // gates
+    M.links.forEach(L => {
+      const a = P(L.a), b = P(L.b), mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2, hor = a.y === b.y;
+      const gl = rd * 1.5, gt = Math.max(6, cell * 0.11);
+      ctx.fillStyle = L.open ? hexA(C.gate, 0.28) : C.gate;
+      if (hor) rrect(ctx, mx - gt / 2, my - gl / 2, gt, gl, gt / 2); else rrect(ctx, mx - gl / 2, my - gt / 2, gl, gt, gt / 2);
+      ctx.fill();
+      if (L.open) { ctx.strokeStyle = C.gate; ctx.lineWidth = 1.5; ctx.stroke(); }
+    });
+    // start / goal marks
+    const s0 = P(M.s), g0 = P(M.g), fs = Math.round(clamp(rd * 0.55, 11, 18));
+    ctx.font = `700 ${fs}px ${FONT}`; ctx.textAlign = 'center';
+    ctx.fillStyle = C.ink2; ctx.fillText('S', s0.x - rd * 0.95, s0.y - rd * 0.8);
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(g0.x + rd * 0.75, g0.y + rd * 0.2); ctx.lineTo(g0.x + rd * 0.75, g0.y - rd * 1.25); ctx.stroke();
+    ctx.fillStyle = C.ok; ctx.beginPath(); ctx.moveTo(g0.x + rd * 0.75, g0.y - rd * 1.25); ctx.lineTo(g0.x + rd * 1.45, g0.y - rd * 1.02); ctx.lineTo(g0.x + rd * 0.75, g0.y - rd * 0.8); ctx.closePath(); ctx.fill();
+    ctx.fillText('G', g0.x - rd * 0.95, g0.y - rd * 0.8);
+    // electron clouds
+    let imax = 0; probs.forEach((v, i) => { if (v > probs[imax]) imax = i; });
+    for (let i = 0; i < M.n; i++) {
+      const v = probs[i]; if (v < 0.004) continue;
+      const c = P(i), rr = rd * 1.12, a = 0.08 + 0.92 * clamp(v, 0, 1);
+      const g = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, rr);
+      g.addColorStop(0, hexA(C.e, a)); g.addColorStop(0.5, hexA(C.e, a * 0.5)); g.addColorStop(1, hexA(C.e, 0));
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(c.x, c.y, rr, 0, Math.PI * 2); ctx.fill();
+      if (v >= 0.02) { ctx.fillStyle = C.ink; ctx.font = `700 ${Math.round(clamp(rd * 0.45, 10, 15))}px ${FONT}`; ctx.fillText(Math.round(v * 100) + '%', c.x, c.y + rd + Math.round(clamp(rd * 0.5, 11, 16))); }
+    }
+    if (probs[imax] > 0.3) {
+      const c = P(imax), md = claw && now - claw.t0 >= GRAB ? (claw.ok ? 'happy' : 'sad') : 'normal';
+      face(ctx, c.x, c.y, rd * 1.05, probs[imax], md, blinkT < 0);
+    }
+    // UFO over the goal when measuring
+    const e = claw ? now - claw.t0 : -1, park = { x: w - Math.max(36, w * 0.06), y: Math.max(22, h * 0.07) };
+    const mv = claw ? clamp(e / 220, 0, 1) : 0, ux = park.x + (g0.x - park.x) * mv, uy = park.y;
+    let ext = 0;
+    if (claw) ext = e < 220 ? 0 : e < GRAB ? (e - 220) / (GRAB - 220) : e < 800 ? 1 : 1 - clamp((e - 800) / 300, 0, 1);
+    if (ext > 0) {
+      const ty = uy + (g0.y - uy) * ext;
+      ctx.strokeStyle = C.ink2; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(ux, uy); ctx.lineTo(ux, ty); ctx.stroke();
+      const hl = rd * 0.8, cl = e >= GRAB ? 0.25 : 1;
+      [-1, 1].forEach(sg => { ctx.beginPath(); ctx.moveTo(ux, ty - hl * 0.5); ctx.quadraticCurveTo(ux + sg * hl * (0.4 + 0.5 * cl), ty - hl * 0.2, ux + sg * hl * (0.12 + 0.45 * cl), ty + hl * 0.45); ctx.stroke(); });
+    }
+    drawUFO(ctx, ux, uy, Math.max(24, w * 0.045));
+    if (state === 'run') {
+      const left = Math.max(0, LIMIT_M - t), hurry = left < 5;
+      ctx.textAlign = 'left'; ctx.fillStyle = hurry ? C.bad : C.ink2; ctx.font = `700 ${fsz(w, hurry ? 16 : 13)}px ${FONT}`;
+      ctx.fillText(`残り ${left.toFixed(1)} 秒`, 10, h - 10);
+    }
+  }
+  function drawMain(p) {
+    const { ctx, w, h } = fit(cv), now = performance.now();
+    if (isMaze()) { if (M) drawMaze(ctx, w, h, now); return; }
+    const x0 = w * 0.04, x1 = w * 0.96, X = u => x0 + (u + 1) / 2 * (x1 - x0);
+    const v = bar.value / 1000, s = tiltVal(), tc = coupling();
+    const hb = 0.12 + 0.72 * (1 - v);
+    const E = u => {
+      const a = Math.abs(u);
+      let e = a > 0.66 ? Math.min(1.25, 1.25 * Math.pow((a - 0.66) / 0.26, 2)) : 0;
+      e += hb * Math.exp(-u * u / (2 * 0.11 * 0.11));
+      e -= 0.34 * s * u;
+      return e;
+    };
+    const base = h * 0.83, sc = h * 0.4, Y = e => base - e * sc;
+    // gate electrodes
+    const gy = h * 0.035, gh = h * 0.13;
+    const gates = [
+      { u: -0.42, wd: 0.22, lab: '左ゲート', on: LV[lv].tilt ? 0.5 - 0.5 * s : 0.5 },
+      { u: 0, wd: 0.09, lab: '壁ゲート', on: v },
+      { u: 0.42, wd: 0.22, lab: '右ゲート', on: LV[lv].tilt ? 0.5 + 0.5 * s : 0.5 }
+    ];
+    ctx.textAlign = 'center';
+    gates.forEach(g => {
+      const gx = X(g.u - g.wd / 2), gw = X(g.u + g.wd / 2) - gx;
+      ctx.fillStyle = hexA(C.gate, 0.35 + 0.65 * g.on);
+      rrect(ctx, gx, gy - 12, gw, gh + 12, 7); ctx.fill();
+      ctx.fillStyle = C.ink2; ctx.font = `700 ${fsz(w, 12)}px ${FONT}`;
+      ctx.fillText(g.lab, X(g.u), gy + gh + fsz(w, 16));
+    });
+    // potential landscape
+    ctx.beginPath();
+    for (let k = 0; k <= 240; k++) { const u = -1 + 2 * k / 240; const x = X(u), y = Y(E(u)); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+    ctx.lineTo(X(1), h + 2); ctx.lineTo(X(-1), h + 2); ctx.closePath();
+    ctx.fillStyle = C.sub; ctx.fill();
+    ctx.beginPath();
+    for (let k = 0; k <= 240; k++) { const u = -1 + 2 * k / 240; const x = X(u), y = Y(E(u)); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+    ctx.strokeStyle = C.ink2; ctx.lineWidth = 2.2; ctx.stroke();
+    // goal flag
+    const fx0 = X(0.62), fy = Y(E(0.62));
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(fx0, fy); ctx.lineTo(fx0, fy - h * 0.16); ctx.stroke();
+    ctx.fillStyle = C.ok; ctx.beginPath(); ctx.moveTo(fx0, fy - h * 0.16); ctx.lineTo(fx0 + w * 0.05, fy - h * 0.135); ctx.lineTo(fx0, fy - h * 0.11); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = C.ok; ctx.font = `700 ${fsz(w, 12)}px ${FONT}`; ctx.textAlign = 'left'; ctx.fillText('ゴール', fx0 + 4, fy - h * 0.17);
+    ctx.textAlign = 'center';
+    // electron clouds + claw geometry
+    const R = Math.min(w, h) * 0.13;
+    const wells = [{ u: -0.4, p: 1 - p, name: '左' }, { u: 0.4, p, name: '右' }];
+    const yc = wells.map(o => Y(E(o.u)) - R * 0.95);
+    const e = claw ? now - claw.t0 : -1;
+    const parkX = X(0.83), tgtX = X(0.4), hl = R * 0.72;
+    let ux = parkX + (tgtX - parkX) * (claw ? easeIO(clamp(e / 200, 0, 1)) : 0);
+    const uy = gy + gh * 0.45 + (claw ? 0 : Math.sin(clock * 2.6) * 3);
+    let ext = 0;
+    if (claw) {
+      if (e < 200) ext = 0;
+      else if (e < GRAB) ext = easeIn((e - 200) / (GRAB - 200));
+      else if (e < 780) ext = 1;
+      else ext = 1 - 0.7 * easeOut(clamp((e - 780) / 340, 0, 1));
+      if (!claw.ok && e > 780 && e < 1200) ux += Math.sin(e * 0.045) * 5;
+    }
+    const tipY0 = uy + hl * 0.95, tipY = tipY0 + (yc[1] - tipY0) * ext;
+    const closed = claw && e >= GRAB, carry = claw && claw.ok && e >= 780;
+    const mood = k => !claw || e < GRAB ? 'normal' : claw.ok ? (k === 1 ? 'happy' : 'normal') : (k === 0 ? 'sad' : 'normal');
+    const sup = p > 0.04 && p < 0.96 && !coll;
+    if (tc > 0.03 && !coll) {
+      ctx.save(); ctx.setLineDash([6, 8]); ctx.lineDashOffset = -clock * 30;
+      ctx.strokeStyle = hexA(C.e, clamp(tc / T_MAX, 0, 1) * 0.7); ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(X(-0.4), yc[0]); ctx.lineTo(X(0.4), yc[1]); ctx.stroke(); ctx.restore();
+    }
+    wells.forEach((o, k) => {
+      let cx = X(o.u), cy = yc[k];
+      const held = carry && k === 1;
+      if (held) { cx = ux; cy = tipY; }
+      const rr = R * (sup ? 1 + 0.05 * Math.sin(clock * 9 + k * 3) : 1) * (held ? 0.85 : 1);
+      const a = 0.06 + 0.94 * o.p;
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, rr);
+      g.addColorStop(0, hexA(C.e, a)); g.addColorStop(0.45, hexA(C.e, a * 0.55)); g.addColorStop(1, hexA(C.e, 0));
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, rr, 0, Math.PI * 2); ctx.fill();
+      face(ctx, cx, cy, rr, o.p, mood(k), blinkT < 0);
+      if (k === 1 && state === 'run' && p > 0.88) {
+        const al = clamp((p - 0.88) / 0.07, 0, 1);
+        ctx.save(); ctx.globalAlpha = al; ctx.fillStyle = C.gate;
+        for (let j = 0; j < 4; j++) {
+          const an = clock * 2.2 + j * Math.PI / 2;
+          ctx.save(); ctx.translate(cx + Math.cos(an) * rr * 0.95, cy + Math.sin(an) * rr * 0.72); ctx.rotate(clock * 3);
+          fx.spark(ctx, 6 + 2 * Math.sin(clock * 8 + j)); ctx.restore();
+        }
+        ctx.restore();
+      }
+      ctx.fillStyle = C.ink; ctx.font = `400 ${fsz(w, 20)}px ${FONTD}`;
+      if (held) { ctx.fillStyle = C.ok; ctx.fillText('GET!', cx + rr * 1.15, cy + 6); }
+      else if (!(carry && k === 0)) ctx.fillText(`${o.name} ${Math.round(o.p * 100)}%`, cx, cy - rr * 0.72 - 6);
+    });
+    // claw arm + hooks (the sensor UFO)
+    ctx.strokeStyle = C.ink2; ctx.lineWidth = Math.max(2.5, w * 0.004); ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(ux, uy); ctx.lineTo(ux, tipY - hl * 0.55); ctx.stroke();
+    const spread = closed ? (claw.ok ? 0.55 : 0.12) : 1;
+    [-1, 1].forEach(sg => {
+      ctx.beginPath(); ctx.moveTo(ux, tipY - hl * 0.55);
+      ctx.quadraticCurveTo(ux + sg * hl * (0.35 + 0.6 * spread), tipY - hl * 0.25, ux + sg * hl * (0.1 + 0.5 * spread), tipY + hl * 0.45);
+      ctx.stroke();
+    });
+    ctx.fillStyle = C.ink2; ctx.beginPath(); ctx.arc(ux, tipY - hl * 0.55, Math.max(3, w * 0.005), 0, Math.PI * 2); ctx.fill();
+    // UFO body
+    const uw = Math.max(30, w * 0.062), uh = uw * 0.34;
+    ctx.fillStyle = hexA(C.spin, 0.45); ctx.beginPath(); ctx.ellipse(ux, uy - uh * 0.3, uw * 0.45, uh * 1.05, 0, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = C.ink; ctx.beginPath(); ctx.ellipse(ux, uy, uw, uh * 0.55, 0, 0, Math.PI * 2); ctx.fill();
+    for (let k = -2; k <= 2; k++) {
+      ctx.fillStyle = ((Math.floor(clock * 5) + k) & 1) ? C.gate2 : C.e;
+      ctx.beginPath(); ctx.arc(ux + k * uw * 0.36, uy + uh * 0.05, Math.max(2, uh * 0.16), 0, Math.PI * 2); ctx.fill();
+    }
+    if (flash > 0.01) { ctx.strokeStyle = hexA(C.e, flash); ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(ux, uy, uw + 14 * (1 - flash), uh + 10 * (1 - flash), 0, 0, Math.PI * 2); ctx.stroke(); }
+    if (!claw) { ctx.fillStyle = C.muted; ctx.font = `700 ${fsz(w, 11)}px ${FONT}`; ctx.fillText('センサーUFO', ux, tipY + hl * 0.45 + fsz(w, 15)); }
+    // time left
+    if (state === 'run') {
+      const left = Math.max(0, LIMIT - t), hurry = left < 3;
+      ctx.textAlign = 'left'; ctx.fillStyle = hurry ? C.bad : C.ink2; ctx.font = `700 ${fsz(w, hurry ? 16 : 13)}px ${FONT}`;
+      ctx.fillText(`残り ${left.toFixed(1)} 秒`, x0 + 4, h - 12);
+    }
+  }
+  function drawStrip() {
+    const { ctx, w, h } = fit(cv2);
+    const l = w * 0.1, rgt = w * 0.975, tp = h * 0.26, bt = h * 0.76;
+    const LIM = lim(), X = tt => l + tt / LIM * (rgt - l), Y = p => bt - p * (bt - tp);
+    ctx.lineWidth = 1; ctx.strokeStyle = C.line; ctx.fillStyle = C.muted; ctx.font = `500 ${fsz(w, 11)}px ${FONT}`;
+    ctx.textAlign = 'right';
+    [0, 0.5, 1].forEach(q => { ctx.beginPath(); ctx.moveTo(l, Y(q)); ctx.lineTo(rgt, Y(q)); ctx.stroke(); ctx.fillText(Math.round(q * 100) + '%', l - 6, Y(q) + 4); });
+    const pf = LV[lv].perf; ctx.save(); ctx.setLineDash([3, 5]); ctx.strokeStyle = hexA(C.gate, 0.9); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(l, Y(pf)); ctx.lineTo(rgt, Y(pf)); ctx.stroke(); ctx.restore();
+    ctx.textAlign = 'center';
+    for (let s = LIM > 12 ? 5 : 2; s <= LIM; s += LIM > 12 ? 5 : 2) ctx.fillText(s + '秒', X(s), bt + fsz(w, 16));
+    ctx.textAlign = 'left'; ctx.fillStyle = C.ink2; ctx.font = `700 ${fsz(w, 12)}px ${FONT}`;
+    ctx.fillText(isMaze() ? 'ゴールにいる確率' : '右にいる確率', l, tp - 8);
+    ctx.textAlign = 'right'; ctx.fillStyle = C.gate; ctx.font = `700 ${fsz(w, 11)}px ${FONT}`;
+    ctx.fillText(`${Math.round(pf * 100)}%以上で PERFECT`, rgt, tp - 8);
+    if (hist.length > 1) {
+      ctx.beginPath(); hist.forEach((o, k) => { const x = X(o.t), y = Y(o.p); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+      ctx.lineTo(X(hist[hist.length - 1].t), bt); ctx.lineTo(X(0), bt); ctx.closePath();
+      ctx.fillStyle = hexA(C.e, 0.12); ctx.fill();
+      ctx.beginPath(); hist.forEach((o, k) => { const x = X(o.t), y = Y(o.p); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+      ctx.strokeStyle = C.e; ctx.lineWidth = 2.5; ctx.stroke();
+      const lst = hist[hist.length - 1];
+      if (state === 'run') { ctx.strokeStyle = C.ink2; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(X(lst.t), tp); ctx.lineTo(X(lst.t), bt); ctx.stroke(); }
+      else { ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(X(lst.t), Y(lst.p), 5, 0, Math.PI * 2); ctx.fill(); }
+    }
+  }
+  function frame(dt) {
+    clock += dt; flash = Math.max(0, flash - dt * 1.6);
+    blinkT -= dt; if (blinkT < -0.14) blinkT = 2 + Math.random() * 3;
+    if (state === 'run') {
+      t += dt;
+      const L = LV[lv], n = Math.max(1, Math.ceil(dt / 0.004)), h = dt / n;
+      if (isMaze()) {
+        const sg = L.sigma, tau = 1.0;
+        for (let j = 0; j < M.n; j++) {
+          if (sg) mzNoi[j] += -mzNoi[j] * dt / tau + sg * Math.sqrt(2 * dt / tau) * gauss();
+          mzEps[j] = (M.type[j] === 'x' ? EX : 0) + mzNoi[j] + mzQ[j];
+        }
+        for (let k = 0; k < n; k++) mzStep(mzRe, mzIm, mzEps, M.links, TL, h);
+        let nrm = 0; for (let j = 0; j < M.n; j++) nrm += mzP(j);
+        nrm = 1 / Math.sqrt(nrm); for (let j = 0; j < M.n; j++) { mzRe[j] *= nrm; mzIm[j] *= nrm; }
+      } else {
+        const tc = coupling(), ep = detuning();
+        for (let k = 0; k < n; k++) stepBloch(r, tc, ep, L.g1, L.gphi, h);
+      }
+      hist.push({ t, p: pNow() });
+      const left = Math.ceil(lim() - t);
+      if (left <= 3 && left > 0 && left !== lastSec) { lastSec = left; sfx.play('warn'); }
+      sfx.hum(0.02, 200 * Math.pow(2, 1.6 * pNow()));
+      if (t >= lim()) { t = lim(); measure(true); }
+    }
+    let p = pR();
+    if (coll) { const q = clamp((performance.now() - coll.t0) / 320, 0, 1), e = 1 - Math.pow(1 - q, 3); p = coll.from + (coll.to - coll.from) * e; }
+    drawMain(p); drawStrip();
+  }
+  return {
+    enter() { reset(); },
+    debug() { return { M, geo, state }; },
+    leave() { if (state === 'run' || state === 'claw') reset(); sfx.hum(0); },
+    frame,
+    key(e) { if (e.code === 'Space' || e.code === 'Enter') { act(); return true; } return false; }
+  };
+})();
+
+/* ============ GAME B: spin echo rhythm ============
+   Ensemble of N repetitions. Each has detuning delta_k(t): Ornstein-Uhlenbeck noise (sigma, tau_c).
+   Phase accumulates d(phi) = delta dt. A pi pulse maps phi -> -phi. Score = |<e^{i phi}>| at the goal. */
+/* ============ spin-echo technical core: Bloch ensemble, pulse errors, filter function ============ */
+const TECH_DT = 0.01;
+function techNoise(L, M) {
+  const S = Math.round(L.T / TECH_DT), out = [];
+  for (let k = 0; k < M; k++) {
+    const a = new Float32Array(S);
+    for (const c of L.noise) {
+      if (c.ou) {
+        const rr = Math.exp(-TECH_DT / c.tau), q = c.ou * Math.sqrt(1 - rr * rr); let d = gauss() * c.ou;
+        for (let j = 0; j < S; j++) { a[j] += d; d = d * rr + q * gauss(); }
+      } else if (c.sine) {
+        const ph = Math.random() * 2 * Math.PI, w = 2 * Math.PI * c.f;
+        for (let j = 0; j < S; j++) a[j] += c.sine * Math.sin(w * (j + 0.5) * TECH_DT + ph);
+      }
+    }
+    out.push(a);
+  }
+  return out;
+}
+const techV0 = s => s === 'Y' ? [0, 1, 0] : [1, 0, 0];
+function techRot(v, ax, th) {
+  const c = Math.cos(th), s = Math.sin(th), x = v[0], y = v[1], z = v[2];
+  if (ax === 'X') { v[1] = y * c - z * s; v[2] = y * s + z * c; } else { v[2] = z * c - x * s; v[0] = z * s + x * c; }
+}
+function techIdeal(st, pulses) { const v = techV0(st); pulses.forEach(p => techRot(v, p.ax, Math.PI)); return v; }
+function techPrep(noise) {
+  return noise.map(nz => { const c = new Float32Array(nz.length), sn = new Float32Array(nz.length); for (let j = 0; j < nz.length; j++) { c[j] = Math.cos(nz[j] * TECH_DT); sn[j] = Math.sin(nz[j] * TECH_DT); } return { c, s: sn }; });
+}
+function techSim(L, prep, pulses) {
+  const S = prep[0].c.length, M = prep.length, th = Math.PI * (1 + L.err);
+  const ps = pulses.map(p => ({ i: Math.min(S - 1, Math.max(0, Math.round(p.t / TECH_DT))), ax: p.ax })).sort((a, b) => a.i - b.i);
+  const fid = [];
+  for (const st of L.states) {
+    const d = techIdeal(st, pulses); let sum = 0;
+    for (let k = 0; k < M; k++) {
+      const v = techV0(st), C0 = prep[k].c, S0 = prep[k].s; let pi = 0, x = v[0], y = v[1];
+      for (let j = 0; j < S; j++) {
+        if (pi < ps.length && ps[pi].i === j) { v[0] = x; v[1] = y; while (pi < ps.length && ps[pi].i === j) { techRot(v, ps[pi].ax, th); pi++; } x = v[0]; y = v[1]; }
+        const c = C0[j], sn = S0[j], xn = x * c - y * sn; y = x * sn + y * c; x = xn;
+      }
+      sum += x * d[0] + y * d[1] + v[2] * d[2];
+    }
+    fid.push(sum / M);
+  }
+  return { each: fid, avg: Math.max(0, fid.reduce((a, b) => a + b, 0) / fid.length) };
+}
+function techPreset(name, n, T) {
+  const cp = k => T * (k + 0.5) / n;
+  if (name === 'hahn') return [{ t: T / 2, ax: 'Y' }];
+  if (name === 'cpmg') return Array.from({ length: n }, (_, k) => ({ t: cp(k), ax: 'Y' }));
+  if (name === 'xy4') return Array.from({ length: n }, (_, k) => ({ t: cp(k), ax: k % 2 ? 'Y' : 'X' }));
+  if (name === 'xy8') { const pat = 'XYXYYXYX'; return Array.from({ length: n }, (_, k) => ({ t: cp(k), ax: pat[k % 8] })); }
+  if (name === 'udd') return Array.from({ length: n }, (_, k) => ({ t: T * Math.pow(Math.sin(Math.PI * (k + 1) / (2 * n + 2)), 2), ax: 'Y' }));
+  return [];
+}
+const PRESET_NAMES = { hahn: 'ハーン', cpmg: 'CPMG', xy4: 'XY4', xy8: 'XY8', udd: 'UDD' };
+function techFilter(pulses, T, w) { // y(w) = ∫ s(t) e^{iwt} dt
+  const ts = [0, ...pulses.map(p => p.t).sort((a, b) => a - b), T];
+  let re = 0, im = 0, sg = 1;
+  for (let j = 0; j < ts.length - 1; j++) {
+    const a = ts[j], b = ts[j + 1];
+    if (w < 1e-6) re += sg * (b - a);
+    else { re += sg * (Math.sin(w * b) - Math.sin(w * a)) / w; im += sg * (Math.cos(w * a) - Math.cos(w * b)) / w; }
+    sg = -sg;
+  }
+  return { re, im, abs2: re * re + im * im };
+}
+function besselJ0(x) { let s = 0, t = 1; const q = -(x * x) / 4; for (let m = 0; m < 60; m++) { if (m) t *= q / (m * m); s += t; if (Math.abs(t) < 1e-12) break; } return s; }
+function techPredict(L, pulses) {
+  let varp = 0, W = 1;
+  const wlo = Math.log(0.01), whi = Math.log(300), NW = 500;
+  for (const c of L.noise) {
+    if (c.ou) {
+      let acc = 0, pw = 0, pf = 0;
+      for (let k = 0; k <= NW; k++) {
+        const w = Math.exp(wlo + (whi - wlo) * k / NW), Sv = 2 * c.ou * c.ou * c.tau / (1 + w * w * c.tau * c.tau), f = Sv * techFilter(pulses, L.T, w).abs2;
+        if (k) acc += 0.5 * (f + pf) * (w - pw); pw = w; pf = f;
+      }
+      acc += pf * 0 + 2 * c.ou * c.ou * c.tau * techFilter(pulses, L.T, 0).abs2 * Math.exp(wlo); // 0..wlo slice
+      varp += acc / Math.PI;
+    } else if (c.sine) {
+      W *= besselJ0(c.sine * Math.sqrt(techFilter(pulses, L.T, 2 * Math.PI * c.f).abs2));
+    }
+  }
+  return Math.max(0, W * Math.exp(-varp / 2));
+}
+function* techBestGen(L, prep) {
+  let best = { f: -1 };
+  for (const nm of Object.keys(PRESET_NAMES)) {
+    for (let n = 1; n <= (nm === 'hahn' ? 1 : L.max); n++) {
+      const ps = techPreset(nm, n, L.T), f = techSim(L, prep, ps).avg;
+      if (f > best.f) best = { f, name: nm, n, pulses: ps };
+      yield best;
+    }
+  }
+  return best;
+}
+function techBest(L, prep) { const g = techBestGen(L, prep); let r = g.next(); while (!r.done) r = g.next(); return r.value; }
+
+games.gB = (() => {
+  const LV = [
+    { T: 6, sigma: 1.0, tauc: Infinity, max: 1,
+      intro: '雑音の強さが変わらないレベル。反転は1回だけ使えます。',
+      hint: '反転の前と後で、同じ時間だけ回ると…？ 押すタイミングを変えて試してみよう。' },
+    { T: 6, sigma: 0.7, tauc: 3, max: 4,
+      intro: '雑音の強さがじわじわ変わるレベル。反転は4回まで使えます。',
+      hint: '1回だけだと、雑音の変化についていけません。4回をリズムよく等間隔に押してみよう。' },
+    { T: 5, sigma: 1.3, tauc: 0.25, max: 8,
+      intro: '雑音がすばやく変わる手ごわいレベル。反転は8回まで使えます。',
+      hint: '速い雑音は反転でも防ぎきれない相手。細かく等間隔に押すほど、少しずつ守れます。' },
+    { tech: true, T: 5, max: 12, err: 0.18, states: ['Y'], noise: [{ ou: 0.9, tau: 2 }],
+      intro: '技術1：パルスの回転に18%の誤差があります。守る情報はたて向き（Y）。パルス列を設計して「実行する」！',
+      hint: '針（量子情報）と同じ向きの軸（Y）でパルスを打つと、誤差がたまりにくくなります（CPMG）。' },
+    { tech: true, T: 5, max: 12, err: 0.15, states: ['Y', 'X'], noise: [{ ou: 0.8, tau: 1.5 }],
+      intro: '技術2：たて（Y）とよこ（X）、2つの向きの量子情報を同時に守ろう。パルスには15%の誤差。',
+      hint: 'Y だけだとよこ向きの情報がこわれます。X と Y を組み合わせる XY4 や XY8 を試してみよう。' },
+    { tech: true, T: 6, max: 16, err: 0.03, states: ['Y'], noise: [{ ou: 0.35, tau: 0.2 }, { ou: 0.35, tau: 1 }, { ou: 0.35, tau: 5 }, { sine: 1.3, f: 16 / 12 }],
+      intro: '技術3：ゆっくりしたノイズに加えて、決まった周波数でゆれるノイズ源がいます。下のグラフでノイズの山を確かめよう。',
+      hint: 'パルスは多いほど良い…とは限らない！ フィルター（青）の山がノイズの鋭い山に重なると逆効果です。' }
+  ];
+  const N = 240, SHOW = 44, DT = 0.01;
+  const cv = $('#cvB'), cv2 = $('#cvB2'), main = $('#bMain'), flipBtn = $('#bFlip'), st = $('#bStatus'),
+    ov = $('#bOv'), res = $('#bRes'), pipsEl = $('#bPips'), box = cv.parentElement;
+  let lv = 0, state = 'idle', noise = null, S = 0, ph = new Float64Array(N), i = 0, t = 0,
+    pulses = [], trace = [], cd = 0, cdShown = 0, flipT = -1, out = null, ovUntil = 0, lastAct = 0,
+    echoArm = false, minC = 1, lastTick = 0, token = 0, nEcho = 0;
+
+  function genNoise() {
+    const L = LV[lv]; S = Math.round(L.T / DT); noise = [];
+    const rr = isFinite(L.tauc) ? Math.exp(-DT / L.tauc) : 1, q = L.sigma * Math.sqrt(1 - rr * rr);
+    for (let k = 0; k < N; k++) {
+      const a = new Float32Array(S); let d = gauss() * L.sigma;
+      for (let j = 0; j < S; j++) { a[j] = d; d = d * rr + q * gauss(); }
+      noise.push(a);
+    }
+  }
+  function coh(arr) { let cx = 0, cy = 0; for (let k = 0; k < N; k++) { cx += Math.cos(arr[k]); cy += Math.sin(arr[k]); } return { c: Math.hypot(cx, cy) / N, a: Math.atan2(cy, cx) }; }
+  function simulate(idx) {
+    const p = new Float64Array(N), tr = [{ t: 0, c: 1 }], sorted = [...idx].sort((a, b) => a - b); let j = 0;
+    for (let s = 0; s < S; s++) {
+      while (j < sorted.length && sorted[j] === s) { for (let k = 0; k < N; k++) p[k] = -p[k]; j++; }
+      for (let k = 0; k < N; k++) p[k] += noise[k][s] * DT;
+      if ((s + 1) % 5 === 0 || s === S - 1) tr.push({ t: (s + 1) * DT, c: coh(p).c });
+    }
+    return { c: coh(p).c, trace: tr };
+  }
+  const cpmg = n => Array.from({ length: n }, (_, k) => Math.round(LV[lv].T * (2 * k + 1) / (2 * n) / DT));
+  const pct = x => Math.round(x * 100);
+
+  function pips() {
+    const L = LV[lv]; pipsEl.innerHTML = '';
+    for (let k = 0; k < L.max; k++) { const e = document.createElement('i'); if (k < pulses.length) e.className = 'used'; pipsEl.appendChild(e); }
+    $('#bLeft').textContent = L.max - pulses.length;
+  }
+  function hud() {
+    $('#bTime').textContent = Math.max(0, LV[lv].T - (state === 'run' ? t : state === 'end' ? LV[lv].T : 0)).toFixed(1);
+    const b = store.get('B' + lv, null); $('#bBest').textContent = b == null ? '—' : b + '%';
+    if (isTech()) $('#bTime').textContent = Math.max(0, LV[lv].T - (state === 'run' ? t : state === 'end' ? LV[lv].T : 0)).toFixed(1);
+  }
+  function reset() {
+    token++; state = 'idle'; noise = null; ph = new Float64Array(N); i = 0; t = 0; pulses = []; trace = []; out = null;
+    flipBtn.disabled = true; main.disabled = false; main.textContent = 'スタート'; attn(main, true);
+    st.textContent = LV[lv].intro; res.hidden = true; hideOv(ov); ovUntil = 0; pips(); hud();
+    tVec = null; tTrace = []; tOut = null; bestJob = null; flipT = -1; flipAx = 'Y'; techUI();
+  }
+  function start() {
+    if (isTech()) { techStart(); return; }
+    genNoise(); ph = new Float64Array(N); i = 0; t = 0; pulses = []; trace = [{ t: 0, c: 1 }]; out = null;
+    state = 'count'; cd = 2.4; cdShown = 0; main.disabled = true; main.textContent = 'プレイ中…'; flipBtn.disabled = true; res.hidden = true;
+    token++; echoArm = false; minC = 1; lastTick = 0; nEcho = 0; attn(main, false); hideOv(ov);
+    st.textContent = 'スタートの合図で、針がすべて上にそろいます。反転ボタンのタイミングを考えよう。';
+    pips(); hud();
+  }
+  function flip() {
+    if (state !== 'run' || pulses.length >= LV[lv].max || performance.now() - flipT < 80) return;
+    for (let k = 0; k < N; k++) ph[k] = -ph[k];
+    pulses.push(i); flipT = performance.now();
+    sfx.play('flip'); echoArm = true; minC = coh(ph).c;
+    flipBtn.classList.remove('hit'); void flipBtn.offsetWidth; flipBtn.classList.add('hit');
+    if (pulses.length >= LV[lv].max) flipBtn.disabled = true;
+    pips();
+  }
+  function end() {
+    state = 'end'; flipBtn.disabled = true; main.disabled = false; main.textContent = 'もう一度'; attn(main, true);
+    sfx.play('go');
+    const L = LV[lv], fin = coh(ph).c, idealIdx = cpmg(L.max), ideal = simulate(idealIdx), none = simulate([]);
+    out = { fin, ideal, none, idealIdx };
+    const ratio = fin / Math.max(ideal.c, 0.02), stars = ratio >= 0.92 ? 3 : ratio >= 0.75 ? 2 : ratio >= 0.5 ? 1 : 0;
+    const best = store.get('B' + lv, 0), rec = pct(fin) > best;
+    if (rec) store.set('B' + lv, pct(fin));
+    store.set('unlockB', true); setUnlock('B', true);
+    showOv(ov, `${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}<small>${['もう一歩', 'おしい！', 'いいね！', 'パーフェクト！'][stars]}${rec ? '　ベスト更新' : ''}</small>`, 'right' + (stars >= 2 ? ' good' : ''));
+    ovUntil = 0;
+    res.hidden = false;
+    res.innerHTML = `<div class="me"><span>あなた（反転${pulses.length}回）</span><b>${pct(fin)}%</b></div>
+      <div><span>反転しなかったら</span><b>${pct(none.c)}%</b></div>
+      <div><span>等間隔に${L.max}回反転したら</span><b>${pct(ideal.c)}%</b></div>`;
+    let msg;
+    if (stars === 3) msg = '見事！ 雑音に負けずに、針をもう一度そろえられました。';
+    else if (pulses.length === 0) msg = '反転を使わないと、針はバラバラのまま。ボタンを押してみよう。';
+    else msg = L.hint;
+    st.innerHTML = `${msg}<br><small>下のグラフの緑の線が、等間隔に反転したときのタイミングです。</small>`;
+    hud();
+    const rank = stars === 3 && ratio >= 0.98 ? 'S' : ['C', 'C', 'B', 'A'][stars];
+    const my = token;
+    setTimeout(() => {
+      if (my !== token) return;
+      result.open({
+        key: 'B', lv, mission: 'ミッション2 守る', score: pct(fin), fmt: v => v + '%', stars, rank, rec,
+        title: { S: 'ぴったりエコー！', A: 'リズム名人！', B: 'いいリズム！', C: 'もうひと息！' }[rank],
+        sub: `そろい度 ${pct(fin)}%（反転${pulses.length}回${nEcho ? `・エコー${nEcho}回` : ''}）／等間隔なら ${pct(ideal.c)}%`,
+        tip: rank === 'S' ? '理想のタイミングとほぼ同じ！ 上のレベルにも挑戦しよう。' : stars === 3 ? '等間隔にぴったり押せると Sランク！' : (pulses.length === 0 ? '反転ボタンを押してみよう。' : L.hint),
+        retry: () => start(), next: lv < LV.length - 1 ? () => { const b = $$('#bLv button')[lv + 1]; if (b) b.click(); if (!isTech()) start(); } : null
+      });
+    }, 900);
+  }
+  function act() {
+    const now = performance.now(); if (now - lastAct < 250) return; lastAct = now;
+    if (state === 'idle' || state === 'end') start();
+  }
+  main.addEventListener('click', act);
+  flipBtn.addEventListener('pointerdown', e => { if (e.button !== undefined && e.button !== 0) return; e.preventDefault(); flip(); });
+  flipBtn.addEventListener('click', e => { if (e.detail === 0) flip(); });
+  /* ---------- technical mode (sequence editor, X/Y pulses, filter function) ---------- */
+  const M_T = 200, isTech = () => !!LV[lv].tech, tpBy = {}, cv3 = $('#cvB3');
+  let tAxis = 'Y', tN = 4, tPrep = null, tVec = null, tSorted = [], tPi = 0, tTrace = [], tOut = null, bestJob = null, bestNow = null,
+    drag = null, tgeo = null, fcache = null, flipAx = 'Y';
+  const tp = () => (tpBy[lv] = tpBy[lv] || []);
+  function techUI() {
+    const on = isTech();
+    $('#bTech').hidden = !on; $('#bFilterBox').hidden = !on; flipBtn.hidden = on;
+    $('#bLeft').previousElementSibling.textContent = on ? 'パルス' : '反転の残り';
+    if (on) { main.textContent = '実行する'; tN = clamp(tN, 1, LV[lv].max); $('#bN').textContent = tN; fcache = null; techHud(); }
+  }
+  function techHud() { if (isTech()) $('#bLeft').textContent = tp().length + '/' + LV[lv].max; }
+  function techStart() {
+    const L = LV[lv];
+    tPrep = techPrep(techNoise(L, M_T)); S = Math.round(L.T / TECH_DT);
+    tVec = L.states.map(st => { const a = new Float64Array(M_T * 3), v = techV0(st); for (let k = 0; k < M_T; k++) { a[3 * k] = v[0]; a[3 * k + 1] = v[1]; a[3 * k + 2] = v[2]; } return a; });
+    tSorted = tp().map(p => ({ i: clamp(Math.round(p.t / TECH_DT), 0, S - 1), ax: p.ax, t: p.t })).sort((a, b) => a.i - b.i);
+    tPi = 0; i = 0; t = 0; tTrace = [{ t: 0, c: 1 }]; tOut = null; bestJob = techBestGen(L, tPrep); bestNow = null;
+    state = 'run'; token++; main.disabled = true; main.textContent = '実行中…'; attn(main, false); res.hidden = true; hideOv(ov);
+    st.textContent = 'パルス列を実行中… 針（量子情報）がどう守られるか見てみよう。';
+    sfx.play('go'); techHud(); hud();
+  }
+  function techFid() {
+    const L = LV[lv]; let sum = 0;
+    L.states.forEach((stt, si) => {
+      const d = techIdeal(stt, tSorted.slice(0, tPi)), a = tVec[si]; let s2 = 0;
+      for (let k = 0; k < M_T; k++) s2 += a[3 * k] * d[0] + a[3 * k + 1] * d[1] + a[3 * k + 2] * d[2];
+      sum += s2 / M_T;
+    });
+    return Math.max(0, sum / L.states.length);
+  }
+  function techFrame(dt) {
+    const L = LV[lv], th = Math.PI * (1 + L.err);
+    t += dt; const target = Math.min(S, Math.floor(t / TECH_DT + 1e-9));
+    while (i < target) {
+      while (tPi < tSorted.length && tSorted[tPi].i === i) {
+        const ax = tSorted[tPi].ax, v = [0, 0, 0];
+        tVec.forEach(a => { for (let k = 0; k < M_T; k++) { v[0] = a[3 * k]; v[1] = a[3 * k + 1]; v[2] = a[3 * k + 2]; techRot(v, ax, th); a[3 * k] = v[0]; a[3 * k + 1] = v[1]; a[3 * k + 2] = v[2]; } });
+        tPi++; flipT = performance.now(); flipAx = ax; sfx.play('flip');
+      }
+      tVec.forEach(a => { for (let k = 0; k < M_T; k++) { const c = tPrep[k].c[i], s = tPrep[k].s[i], x = a[3 * k], y = a[3 * k + 1]; a[3 * k] = x * c - y * s; a[3 * k + 1] = x * s + y * c; } });
+      i++;
+      if (i % 5 === 0 || i === S) tTrace.push({ t: i * TECH_DT, c: techFid() });
+    }
+    for (let k = 0; k < 2 && bestJob; k++) { const r = bestJob.next(); bestNow = r.value; if (r.done) bestJob = null; }
+    if (i >= S) techEnd();
+    hud();
+  }
+  function techEnd() {
+    while (bestJob) { const r = bestJob.next(); bestNow = r.value; if (r.done) bestJob = null; }
+    const L = LV[lv], fin = techFid(), none = techSim(L, tPrep, []).avg, best = bestNow;
+    tOut = { fin, none, best };
+    state = 'end'; main.disabled = false; main.textContent = 'もう一度実行'; attn(main, true); sfx.play('go');
+    const ratio = fin / Math.max(best.f, 0.02), stars = ratio >= 0.95 ? 3 : ratio >= 0.8 ? 2 : ratio >= 0.55 ? 1 : 0;
+    const rank = stars === 3 && fin >= best.f - 0.005 ? 'S' : ['C', 'C', 'B', 'A'][stars];
+    const bestRec = store.get('B' + lv, 0), rec = pct(fin) > bestRec;
+    if (rec) store.set('B' + lv, pct(fin));
+    store.set('unlockB', true); setUnlock('B', true);
+    const bname = `${PRESET_NAMES[best.name]}${best.name === 'hahn' ? '' : '×' + best.n}`;
+    showOv(ov, `${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}<small>守り度 ${pct(fin)}%${rec ? '　ベスト更新' : ''}</small>`, 'right' + (stars >= 2 ? ' good' : ''));
+    res.hidden = false;
+    res.innerHTML = `<div class="me"><span>あなた（パルス${tp().length}回）</span><b>${pct(fin)}%</b></div>
+      <div><span>パルスなし</span><b>${pct(none)}%</b></div>
+      <div><span>お手本の最強（${bname}）</span><b>${pct(best.f)}%</b></div>`;
+    const msg = stars === 3 ? 'お見事！ 量子エンジニア級のパルス設計です。' : L.hint;
+    st.innerHTML = `${msg}<br><small>緑の点線は、お手本の最強パルス列のタイミングです。</small>`;
+    hud(); techHud();
+    const my = token;
+    setTimeout(() => {
+      if (my !== token) return;
+      result.open({
+        key: 'B', lv, mission: 'ミッション2 守る', score: pct(fin), fmt: v => v + '%', stars, rank, rec,
+        title: { S: '量子エンジニア級！', A: 'みごとな設計！', B: 'いい線いってる！', C: '設計を見直そう' }[rank],
+        sub: `守り度 ${pct(fin)}%（パルス${tp().length}回）／お手本の最強 ${bname}：${pct(best.f)}%`,
+        tip: rank === 'S' ? 'お手本の最強と同じか、それ以上！ ほかの技術レベルにも挑戦しよう。' : L.hint,
+        retry: () => techStart(), next: lv < LV.length - 1 ? () => { const b = $$('#bLv button')[lv + 1]; if (b) b.click(); } : null
+      });
+    }, 900);
+  }
+  function drawClockTech() {
+    const { ctx, w, h } = fit(cv), L = LV[lv];
+    const R = Math.min(h * 0.42, w * 0.27), cx = w * 0.32, cy = h * 0.5;
+    ctx.save(); ctx.translate(cx, cy);
+    ctx.fillStyle = C.panel; ctx.strokeStyle = C.line; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = C.line; ctx.lineWidth = 1.5; ctx.setLineDash([4, 5]);
+    ctx.beginPath(); ctx.moveTo(-R, 0); ctx.lineTo(R, 0); ctx.moveTo(0, -R); ctx.lineTo(0, R); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = C.ink2; ctx.font = `700 ${fsz(w, 12)}px ${FONT}`; ctx.textAlign = 'center';
+    ctx.fillText('Y', 0, -R - 8); ctx.fillText('X', R + 12, 4);
+    const fa = flipT > 0 ? clamp((performance.now() - flipT) / 200, 0, 1) : 1, sc = fa < 1 ? -Math.cos(Math.PI * fa) : 1;
+    const sgn = Math.abs(sc) < 0.04 ? 0.04 * Math.sign(sc || 1) : sc;
+    if (flipAx === 'X') ctx.scale(1, sgn); else ctx.scale(sgn, 1);
+    ctx.lineCap = 'round';
+    const cols = { Y: C.e, X: C.spin };
+    L.states.forEach((stt, si) => {
+      const a = tVec ? tVec[si] : null, v0 = techV0(stt); let mx = 0, my = 0;
+      for (let k = 0; k < 44; k++) {
+        const x = a ? a[3 * k] : v0[0], y = a ? a[3 * k + 1] : v0[1];
+        ctx.strokeStyle = hexA(cols[stt], 0.55); ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(x * R * 0.86, -y * R * 0.86); ctx.stroke();
+      }
+      if (a) { for (let k = 0; k < M_T; k++) { mx += a[3 * k]; my += a[3 * k + 1]; } mx /= M_T; my /= M_T; } else { mx = v0[0]; my = v0[1]; }
+      ctx.strokeStyle = cols[stt]; ctx.fillStyle = cols[stt]; ctx.lineWidth = 6;
+      if (Math.hypot(mx, my) * R > 10) arrow(ctx, 0, 0, mx * R * 0.86, -my * R * 0.86, 16);
+    });
+    ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(0, 0, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    const lx = w * 0.62; let ly = h * 0.2;
+    const f = tTrace.length ? tTrace[tTrace.length - 1].c : 1;
+    ctx.textAlign = 'left'; ctx.fillStyle = C.ink2; ctx.font = `700 ${fsz(w, 13)}px ${FONT}`; ctx.fillText('守り度', lx, ly);
+    ctx.fillStyle = f >= 0.8 ? C.ok : C.ink; ctx.font = `400 ${fsz(w, 46)}px ${FONTD}`; ctx.fillText(pct(state === 'idle' ? 1 : f) + '%', lx, ly + fsz(w, 50));
+    ly += fsz(w, 50) + fsz(w, 30);
+    ctx.font = `500 ${fsz(w, 12.5)}px ${FONT}`;
+    const items = L.states.map(s2 => [cols[s2], s2 === 'Y' ? 'たて向き（Y）の量子情報' : 'よこ向き（X）の量子情報']);
+    items.push([C.ink2, `パルス誤差 ${Math.round(L.err * 100)}%`]);
+    items.forEach(([c, txt], k) => {
+      if (k < items.length - 1) { ctx.strokeStyle = c; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(lx, ly - 4); ctx.lineTo(lx + 22, ly - 4); ctx.stroke(); }
+      ctx.fillStyle = C.ink2; ctx.fillText(txt, lx + (k < items.length - 1 ? 32 : 0), ly); ly += fsz(w, 22);
+    });
+  }
+  function drawLineTech() {
+    const { ctx, w, h } = fit(cv2), L = LV[lv];
+    const l = w * 0.085, rgt = w * 0.93, tp0 = h * 0.14, bt = h * 0.5, y0 = h * 0.62, y1 = h * 0.86;
+    const X = tt => l + tt / L.T * (rgt - l), Y = c => bt - c * (bt - tp0);
+    tgeo = { l, rgt, y0: y0 - 14, y1: y1 + 14, T: L.T, X };
+    ctx.lineWidth = 1; ctx.strokeStyle = C.line; ctx.fillStyle = C.muted; ctx.font = `500 ${fsz(w, 11)}px ${FONT}`; ctx.textAlign = 'right';
+    [0, 1].forEach(q => { ctx.beginPath(); ctx.moveTo(l, Y(q)); ctx.lineTo(rgt, Y(q)); ctx.stroke(); ctx.fillText(q * 100 + '%', l - 6, Y(q) + 4); });
+    ctx.textAlign = 'left'; ctx.fillStyle = C.ink2; ctx.font = `700 ${fsz(w, 12)}px ${FONT}`; ctx.fillText('守り度', l, tp0 - 6);
+    if (tOut && tOut.best) {
+      ctx.save(); ctx.setLineDash([3, 4]); ctx.strokeStyle = hexA(C.ok, 0.8); ctx.lineWidth = 1.5;
+      tOut.best.pulses.forEach(p => { ctx.beginPath(); ctx.moveTo(X(p.t), y0 - 12); ctx.lineTo(X(p.t), y1 + 12); ctx.stroke(); }); ctx.restore();
+    }
+    if (tTrace.length > 1) {
+      ctx.strokeStyle = C.e; ctx.lineWidth = 2.5; ctx.beginPath();
+      tTrace.forEach((o, k) => { const x = X(o.t), y = Y(o.c); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.stroke();
+    }
+    // toggling function s(t)
+    const ps = tp().slice().sort((a, b) => a.t - b.t), ym = (y0 + y1) / 2, amp = (y1 - y0) * 0.32;
+    ctx.strokeStyle = hexA(C.ink2, 0.5); ctx.lineWidth = 1.5; ctx.beginPath(); let sg = 1, px = X(0);
+    ctx.moveTo(px, ym - sg * amp);
+    ps.forEach(p => { const x = X(p.t); ctx.lineTo(x, ym - sg * amp); sg = -sg; ctx.lineTo(x, ym - sg * amp); });
+    ctx.lineTo(X(L.T), ym - sg * amp); ctx.stroke();
+    ctx.strokeStyle = C.line; ctx.beginPath(); ctx.moveTo(l, ym); ctx.lineTo(rgt, ym); ctx.stroke();
+    ctx.fillStyle = C.muted; ctx.font = `500 ${fsz(w, 11)}px ${FONT}`; ctx.textAlign = 'center';
+    for (let s2 = 0; s2 <= L.T; s2++) ctx.fillText(s2 + '秒', X(s2), h - 4);
+    if (state === 'run') { ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(X(i * TECH_DT), tp0); ctx.lineTo(X(i * TECH_DT), y1 + 10); ctx.stroke(); }
+    const pr = Math.max(9, Math.min(13, w * 0.016));
+    ps.forEach(p => {
+      const x = X(p.t), done = state === 'run' && p.t <= i * TECH_DT;
+      ctx.fillStyle = p.ax === 'Y' ? C.e : C.spin; ctx.globalAlpha = done ? 0.45 : 1;
+      rrect(ctx, x - pr, ym - pr, pr * 2, pr * 2, 6); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.font = `700 ${Math.round(pr * 1.2)}px ${FONT}`; ctx.fillText(p.ax, x, ym + pr * 0.42); ctx.globalAlpha = 1;
+    });
+    ctx.textAlign = 'right'; ctx.fillStyle = C.ink2; ctx.font = `700 ${fsz(w, 11)}px ${FONT}`;
+    if (state !== 'run' && !ps.length) ctx.fillText('↓ ここをタップしてパルスを置こう', rgt, y0 - 8);
+  }
+  function drawFilter() {
+    if (!isTech()) return;
+    const { ctx, w, h } = fit(cv3), L = LV[lv];
+    const l = w * 0.085, rgt = w * 0.97, tp0 = h * 0.2, bt = h * 0.76, f0 = 0.03, f1 = 10;
+    const X = f => l + Math.log(f / f0) / Math.log(f1 / f0) * (rgt - l), Y = v => bt - clamp((Math.log10(Math.max(v, 1e-4)) + 4) / 4, 0, 1) * (bt - tp0);
+    if (!fcache) {
+      const fs = Array.from({ length: 220 }, (_, k) => f0 * Math.pow(f1 / f0, k / 219));
+      const ps = tp(), T2 = L.T * L.T;
+      const filt = fs.map(f => techFilter(ps, L.T, 2 * Math.PI * f).abs2 / T2);
+      const spec = fs.map(f => { let sv = 0; const wv = 2 * Math.PI * f; L.noise.forEach(c => { if (c.ou) sv += 2 * c.ou * c.ou * c.tau / (1 + wv * wv * c.tau * c.tau); else if (c.sine) sv += c.sine * c.sine * 1.2 * Math.exp(-Math.pow((f - c.f) / 0.035, 2)); }); return sv; });
+      const smax = Math.max(...spec);
+      fcache = { fs, filt, spec: spec.map(v => v / smax), pred: techPredict(L, ps) };
+    }
+    ctx.lineWidth = 1; ctx.strokeStyle = C.line; ctx.fillStyle = C.muted; ctx.font = `500 ${fsz(w, 10.5)}px ${FONT}`; ctx.textAlign = 'center';
+    [0.1, 1, 10].forEach(f => { ctx.beginPath(); ctx.moveTo(X(f), tp0); ctx.lineTo(X(f), bt); ctx.stroke(); ctx.fillText(f + ' Hz', X(f), bt + fsz(w, 14)); });
+    ctx.beginPath(); fcache.fs.forEach((f, k) => { const x = X(f), y = Y(fcache.spec[k]); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+    ctx.lineTo(X(f1), bt); ctx.lineTo(X(f0), bt); ctx.closePath(); ctx.fillStyle = hexA(C.ink2, 0.18); ctx.fill();
+    ctx.beginPath(); fcache.fs.forEach((f, k) => { const x = X(f), y = Y(fcache.filt[k]); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+    ctx.strokeStyle = C.spin; ctx.lineWidth = 2; ctx.stroke();
+    ctx.textAlign = 'left'; ctx.fillStyle = C.ink2; ctx.font = `700 ${fsz(w, 11.5)}px ${FONT}`;
+    ctx.fillText('ノイズの強さ（灰）とフィルター（青）：重なるほど情報がこわれる', l, tp0 - 8);
+    ctx.textAlign = 'right'; ctx.fillStyle = C.ok; ctx.font = `700 ${fsz(w, 12)}px ${FONT}`;
+    ctx.fillText(`予想の守り度 ${pct(fcache.pred)}%（パルス誤差なしの場合）`, rgt, tp0 - 8);
+  }
+  const editable = () => isTech() && state !== 'run';
+  function techChanged() { fcache = null; techHud(); }
+  cv2.addEventListener('pointerdown', e => {
+    if (!editable() || !tgeo) return;
+    const rc = cv2.getBoundingClientRect(), x = e.clientX - rc.left, y = e.clientY - rc.top;
+    if (y < tgeo.y0 - 30 || y > tgeo.y1 + 10 || x < tgeo.l - 8 || x > tgeo.rgt + 8) return;
+    e.preventDefault();
+    const arr = tp(); let hit = -1, bd = 14;
+    arr.forEach((p, k) => { const d = Math.abs(tgeo.X(p.t) - x); if (d < bd) { bd = d; hit = k; } });
+    if (hit >= 0) { drag = { k: hit, x0: x, moved: false }; try { cv2.setPointerCapture(e.pointerId); } catch (er) { /* ignore */ } return; }
+    if (arr.length >= LV[lv].max) { st.textContent = `パルスは${LV[lv].max}回までです。`; return; }
+    const tt = clamp(Math.round((x - tgeo.l) / (tgeo.rgt - tgeo.l) * tgeo.T / TECH_DT) * TECH_DT, 0.02, tgeo.T - 0.02);
+    arr.push({ t: tt, ax: tAxis }); sfx.play('tap'); techChanged();
+  });
+  cv2.addEventListener('pointermove', e => {
+    if (!drag || !tgeo) return;
+    const rc = cv2.getBoundingClientRect(), x = e.clientX - rc.left;
+    if (Math.abs(x - drag.x0) > 4) drag.moved = true;
+    if (drag.moved) { const p = tp()[drag.k]; if (p) { p.t = clamp(Math.round((x - tgeo.l) / (tgeo.rgt - tgeo.l) * tgeo.T / TECH_DT) * TECH_DT, 0.02, tgeo.T - 0.02); techChanged(); } }
+  });
+  const endDrag = () => {
+    if (!drag) return;
+    if (!drag.moved) { const arr = tp(), p = arr[drag.k]; if (p) { if (p.ax === 'Y') p.ax = 'X'; else arr.splice(drag.k, 1); sfx.play('tap'); techChanged(); } }
+    drag = null;
+  };
+  cv2.addEventListener('pointerup', endDrag); cv2.addEventListener('pointercancel', () => { drag = null; });
+  $$('#bTech [data-pre]').forEach(b => b.addEventListener('click', () => {
+    if (!editable()) return; const L = LV[lv];
+    tpBy[lv] = techPreset(b.dataset.pre, b.dataset.pre === 'hahn' ? 1 : tN, L.T); sfx.play('tap'); techChanged();
+  }));
+  $$('#bTech [data-ax]').forEach(b => b.addEventListener('click', () => { tAxis = b.dataset.ax; $$('#bTech [data-ax]').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false')); sfx.play('tap'); }));
+  $('#bNm').addEventListener('click', () => { tN = clamp(tN - 1, 1, LV[lv].max); $('#bN').textContent = tN; sfx.play('tap'); });
+  $('#bNp').addEventListener('click', () => { tN = clamp(tN + 1, 1, LV[lv].max); $('#bN').textContent = tN; sfx.play('tap'); });
+  $('#bClear').addEventListener('click', () => { if (editable()) { tpBy[lv] = []; sfx.play('tap'); techChanged(); } });
+  buildLevels($('#bLv'), LVNAMES.B, k => { lv = k; reset(); }, 'B');
+  $('#bExplain').addEventListener('click', () => openExplain('B'));
+
+  function drawClock() {
+    if (isTech()) { drawClockTech(); return; }
+    const { ctx, w, h } = fit(cv);
+    const R = Math.min(h * 0.42, w * 0.27), cx = w * 0.32, cy = h * 0.5;
+    ctx.save(); ctx.translate(cx, cy);
+    ctx.fillStyle = C.panel; ctx.strokeStyle = C.line; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    for (let k = 0; k < 12; k++) {
+      const a = k * Math.PI / 6, r0 = k % 3 === 0 ? R * 0.86 : R * 0.92;
+      ctx.strokeStyle = k % 3 === 0 ? C.ink2 : C.line; ctx.lineWidth = k % 3 === 0 ? 3 : 2;
+      ctx.beginPath(); ctx.moveTo(Math.sin(a) * r0, -Math.cos(a) * r0); ctx.lineTo(Math.sin(a) * R * 0.98, -Math.cos(a) * R * 0.98); ctx.stroke();
+    }
+    ctx.fillStyle = C.gate; ctx.beginPath(); ctx.moveTo(0, -R - 4); ctx.lineTo(-8, -R - 16); ctx.lineTo(8, -R - 16); ctx.closePath(); ctx.fill();
+    const cNow = coh(ph).c;
+    if ((state === 'run' || state === 'end') && cNow > 0.8) {
+      ctx.strokeStyle = hexA(C.gate, clamp((cNow - 0.8) * 5, 0, 1) * (0.55 + 0.25 * Math.sin(performance.now() / 120)));
+      ctx.lineWidth = 7; ctx.beginPath(); ctx.arc(0, 0, R + 6, 0, Math.PI * 2); ctx.stroke();
+    }
+    const ra = flipT > 0 ? (performance.now() - flipT) / 380 : 2;
+    if (ra < 1) { ctx.strokeStyle = hexA(C.e, 1 - ra); ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(0, 0, R * (1 + 0.28 * ra), 0, Math.PI * 2); ctx.stroke(); }
+    const fa = flipT > 0 ? clamp((performance.now() - flipT) / 200, 0, 1) : 1;
+    const sx = fa < 1 ? -Math.cos(Math.PI * fa) : 1;
+    ctx.scale(Math.abs(sx) < 0.04 ? 0.04 * Math.sign(sx || 1) : sx, 1);
+    const di = noise ? Math.min(i, S - 1) : 0, sg = LV[lv].sigma;
+    ctx.lineCap = 'round';
+    for (let k = 0; k < SHOW; k++) {
+      const a = ph[k], d = noise ? noise[k][di] : 0;
+      const col = d >= 0 ? C.e : C.spin, al = noise ? 0.35 + 0.6 * Math.min(1, Math.abs(d) / (1.6 * sg)) : 0.5;
+      ctx.strokeStyle = hexA(col, al); ctx.lineWidth = 2.2;
+      const ex = Math.sin(a) * R * 0.86, ey = -Math.cos(a) * R * 0.86;
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(ex, ey); ctx.stroke();
+      ctx.fillStyle = hexA(col, al); ctx.beginPath(); ctx.arc(ex, ey, 3, 0, Math.PI * 2); ctx.fill();
+    }
+    const m = coh(ph);
+    const L2 = m.c * R * 0.86;
+    ctx.strokeStyle = C.ink; ctx.fillStyle = C.ink; ctx.lineWidth = 6;
+    if (L2 > 8) arrow(ctx, 0, 0, Math.sin(m.a) * L2, -Math.cos(m.a) * L2, 16);
+    ctx.beginPath(); ctx.arc(0, 0, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    // legend + big number
+    const lx = w * 0.62; let ly = h * 0.2;
+    ctx.textAlign = 'left'; ctx.fillStyle = C.ink2; ctx.font = `700 ${fsz(w, 13)}px ${FONT}`;
+    ctx.fillText('そろい度', lx, ly);
+    ctx.fillStyle = m.c >= 0.8 ? C.ok : C.ink; ctx.font = `400 ${fsz(w, 46)}px ${FONTD}`;
+    ctx.fillText(pct(m.c) + '%', lx, ly + fsz(w, 50));
+    ly += fsz(w, 50) + fsz(w, 30);
+    const nar = w < 560;
+    const items = [[C.e, 2.5, nar ? '速く回る針' : '平均より速く回る針'], [C.spin, 2.5, nar ? '遅く回る針' : '平均より遅く回る針'], [C.ink, 6, nar ? '平均の向き' : '平均の向き（長いほどそろっている）']];
+    ctx.font = `500 ${fsz(w, 12.5)}px ${FONT}`;
+    items.forEach(([c, lw, txt]) => {
+      ctx.strokeStyle = c; ctx.lineWidth = lw; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(lx, ly - 4); ctx.lineTo(lx + 22, ly - 4); ctx.stroke();
+      ctx.fillStyle = C.ink2; ctx.fillText(txt, lx + 32, ly); ly += fsz(w, 22);
+    });
+  }
+  function drawLine() {
+    if (isTech()) { drawLineTech(); return; }
+    const { ctx, w, h } = fit(cv2);
+    const L = LV[lv], l = w * 0.085, rgt = w * 0.93, tp = h * 0.16, bt = h * 0.64, tl = h * 0.82;
+    const X = tt => l + tt / L.T * (rgt - l), Y = c => bt - c * (bt - tp);
+    ctx.lineWidth = 1; ctx.strokeStyle = C.line; ctx.fillStyle = C.muted; ctx.font = `500 ${fsz(w, 11)}px ${FONT}`;
+    ctx.textAlign = 'right';
+    [0, 1].forEach(q => { ctx.beginPath(); ctx.moveTo(l, Y(q)); ctx.lineTo(rgt, Y(q)); ctx.stroke(); ctx.fillText(q * 100 + '%', l - 6, Y(q) + 4); });
+    ctx.textAlign = 'left'; ctx.fillStyle = C.ink2; ctx.font = `700 ${fsz(w, 12)}px ${FONT}`; ctx.fillText('そろい度', l, tp - 7);
+    const pathOf = (tr, col, lw, dash) => {
+      ctx.save(); ctx.setLineDash(dash || []); ctx.strokeStyle = col; ctx.lineWidth = lw;
+      ctx.beginPath(); tr.forEach((o, k) => { const x = X(o.t), y = Y(o.c); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.stroke(); ctx.restore();
+    };
+    if (out) {
+      pathOf(out.none.trace, C.muted, 1.5, [4, 5]);
+      pathOf(out.ideal.trace, hexA(C.ok, 0.85), 2);
+      ctx.save(); ctx.setLineDash([3, 4]); ctx.strokeStyle = C.ok; ctx.lineWidth = 1.5;
+      out.idealIdx.forEach(ix => { const x = X(ix * DT); ctx.beginPath(); ctx.moveTo(x, tp); ctx.lineTo(x, tl); ctx.stroke(); });
+      ctx.restore();
+    }
+    if (trace.length > 1) pathOf(trace, C.e, 2.6);
+    // pulses
+    pulses.forEach(ix => {
+      const x = X(ix * DT);
+      ctx.strokeStyle = hexA(C.e, 0.6); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x, tp); ctx.lineTo(x, tl); ctx.stroke();
+      ctx.fillStyle = C.e; ctx.beginPath(); ctx.moveTo(x, tl + 1); ctx.lineTo(x - 7, tl - 11); ctx.lineTo(x + 7, tl - 11); ctx.closePath(); ctx.fill();
+    });
+    // timeline
+    ctx.fillStyle = C.line; rrect(ctx, l, tl, rgt - l, 7, 4); ctx.fill();
+    const tt = state === 'run' ? t : state === 'end' ? L.T : 0;
+    ctx.fillStyle = C.ink; rrect(ctx, l, tl, Math.max(7, X(tt) - l), 7, 4); ctx.fill();
+    ctx.beginPath(); ctx.arc(X(tt), tl + 3.5, 8, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = C.muted; ctx.font = `500 ${fsz(w, 11)}px ${FONT}`; ctx.textAlign = 'center';
+    for (let s = 0; s <= L.T; s++) ctx.fillText(s + '秒', X(s), tl + fsz(w, 24));
+    // goal
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(rgt, tp - 4); ctx.lineTo(rgt, tl); ctx.stroke();
+    ctx.fillStyle = C.ok; ctx.beginPath(); ctx.moveTo(rgt, tp - 4); ctx.lineTo(rgt + w * 0.035, tp + 6); ctx.lineTo(rgt, tp + 16); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = C.ok; ctx.font = `700 ${fsz(w, 11)}px ${FONT}`; ctx.fillText('ゴール', rgt + w * 0.025, tp + 34);
+    if (out) { ctx.textAlign = 'left'; ctx.fillStyle = C.ok; ctx.fillText('緑：等間隔の反転', l + 70, tp - 7); }
+  }
+  function frame(dt) {
+    const now = performance.now();
+    if (ovUntil && now > ovUntil) { hideOv(ov); ovUntil = 0; }
+    if (state === 'count') {
+      cd -= dt; const n = Math.ceil(cd / 0.8);
+      if (n !== cdShown && n > 0) { cdShown = n; showOv(ov, String(n), 'center'); sfx.play('count'); }
+      if (cd <= 0) { state = 'run'; flipBtn.disabled = false; showOv(ov, 'スタート！<small>針がそろいました</small>', 'clock'); ovUntil = now + 800; sfx.play('go'); }
+    } else if (state === 'run' && isTech()) {
+      techFrame(dt);
+    } else if (state === 'run') {
+      t += dt;
+      const target = Math.min(S, Math.floor(t / DT + 1e-9));
+      while (i < target) { for (let k = 0; k < N; k++) ph[k] += noise[k][i] * DT; i++; }
+      const c = coh(ph).c;
+      trace.push({ t: i * DT, c });
+      if (echoArm) {
+        minC = Math.min(minC, c);
+        if (minC < 0.45 && c > 0.72) {
+          echoArm = false; nEcho++; sfx.play('echo');
+          fx.pop(box, 'エコー！', 76, 70, 'perfect');
+          fx.burstEl(cv, 0.32, 0.5, { n: 30, speed: 240, colors: [C.gate, C.gate2, C.ok] });
+        }
+      }
+      const sec = Math.floor(t);
+      if (sec !== lastTick) { lastTick = sec; if (sec > 0 && i < S) sfx.play('tick'); }
+      if (i >= S) end();
+      hud();
+    }
+    drawClock(); drawLine(); drawFilter();
+  }
+  return {
+    enter() { reset(); },
+    leave() { token++; if (state === 'run' || state === 'count') reset(); },
+    frame,
+    key(e) {
+      if (e.code === 'Space' || e.code === 'Enter' || e.code === 'KeyF') {
+        if (isTech()) { if (state !== 'run') act(); return true; }
+        if (state === 'run') flip(); else act();
+        return true;
+      }
+      return false;
+    }
+  };
+})();
+
+/* ============ GAME C: quantum detective (Pauli spin blockade readout) ============
+   Lv0-2: hidden pair state S or T (50/50). Sensor signal: S -> electron tunnels, level drops to 0
+   quickly.  T -> blocked, level stays 1 until relaxation to S at t ~ Exp(T1), then drops.
+   Samples at FS with white Gaussian noise sigma.
+
+   Lv3 "super": the player hand-draws the detuning pulse eps(t)  (0 = (1,1), 1 = deep in (0,2)).
+   The ramp sweeps two anticrossings; at each one Landau-Zener gives
+        P_diabatic = exp(-2 pi Delta^2 / hbar v)  ->  exp(-A / |d eps/dt|)  in game units.
+     E_ST (S - T_minus, NARROW gap): diabatic (fast) keeps the spin state,
+                                     adiabatic (slow) swaps S <-> T_minus.     -> sweep FAST here
+     E_C  (charge, WIDE gap):        adiabatic (slow) lets the singlet follow the ground charge
+                                     branch (the electron moves); diabatic (fast) strands it on the
+                                     excited branch, which still reads blocked. -> sweep SLOW here
+   The sensor reads charge, not spin.  fq(d) = (1 + d/hypot(d,HYB))/2 is the (0,2) weight of the
+   ground branch, so near the charge line the branches hybridise and the contrast fades:
+        blocked triplet -> 1 ,  ground branch -> 1-fq ,  stranded branch -> fq .
+   Anything off the ground branch relaxes onto it at rate 1/T1(eps), faster the deeper into (0,2).
+   Only one of the three triplets (T_minus) can swap with S, so a slow sweep costs S more than T.
+   A slew-rate limit (instrument bandwidth) caps how fast the player can really sweep. */
+games.gC = (() => {
+  const LV = [
+    { sigma: 0.45, T1: 30, intro: '信号がくっきりしたレベル。落ち着いて見れば見破れます。',
+      hint: '線が「上の点線」と「下の点線」のどちらに近いかを見よう。' },
+    { sigma: 1.1, T1: 12, intro: '信号がザラザラのレベル。少し待つほど、太い線（平均）がはっきりします。',
+      hint: 'ザラザラした細い線より、太い線（平均）を見るのがコツ。' },
+    { sigma: 1.5, T1: 2.5, intro: 'ザラザラなうえに、通せんぼが途中で解けやすいレベル。待ちすぎに注意！',
+      hint: '待ちすぎると T が S に変わってしまいます。最初は高く、途中で下がったら…それは T です。' },
+    { sigma: 1.15, pulse: true, fastT: 2,
+      intro: '読み出しの電圧パルスを、自分で手描きするレベル。上のグラフをなぞってから「パルスを実行」。',
+      hint: 'ピンクの線はサッと、青い線はゆっくり。そして読み出しゾーンでの長居は禁物です。' }
+  ];
+  const FS = 50, TMAX = 5, ROUNDS = 8, WIN = 25, TUN = 25;
+  /* super level */
+  const PR = 100, NP = TMAX * PR, SLEW = 6 / PR, MAV = 4,
+    E_ST = 0.34, E_C = 0.62, A_ST = 0.5, A_C = 2.6,
+    HYB = 0.05, T1_0 = 6, T1_W = 0.2, EXC = 3;
+  const cv = $('#cvC'), cv2 = $('#cvC2'), main = $('#cMain'), bS = $('#cS'), bT = $('#cT'), st = $('#cStatus'),
+    log = $('#cLog'), ov = $('#cOv'), svg = $('#cDD'), dg = $('#cDiag'),
+    box = cv.parentElement, stage = cv.closest('.stage'), stamp = $('#cStamp');
+  let lv = 0, state = 'idle', round = 0, score = 0, nOk = 0, times = [], truth = 'S', tR = null,
+    smp = [], sm = [], t = 0, ans = null, ansT = 0, lastAct = 0, streak = 0, maxStreak = 0, nFast = 0, token = 0;
+  const raw = new Float64Array(NP), pul = new Float64Array(NP), slw = new Float64Array(NP),
+    sig = new Float64Array(NP), md = new Uint8Array(NP);
+  let ev = [], geo = null, pDown = false, pLast = null;
+  const clearStamp = () => { stamp.className = 'stamp'; stamp.textContent = ''; };
+
+  const fq = d => 0.5 * (1 + d / Math.hypot(d, HYB));
+  const t1At = y => T1_0 * Math.exp(-(y - E_C) / T1_W);
+  function shape() { // slew-rate limit, then a short causal moving average (instrument response)
+    raw[0] = 0;
+    let y = 0;
+    for (let k = 0; k < NP; k++) { y += clamp(raw[k] - y, -SLEW, SLEW); slw[k] = y; }
+    for (let k = 0; k < NP; k++) {
+      let s = 0, n = 0;
+      for (let j = Math.max(0, k - MAV); j <= k; j++) { s += slw[j]; n++; }
+      pul[k] = s / n;
+    }
+  }
+  function defaultPulse() {
+    for (let k = 0; k < NP; k++) { const tt = k / PR; raw[k] = tt < 0.2 ? 0 : clamp((tt - 0.2) / 1.4, 0, 1) * 0.78; }
+    shape();
+  }
+  function cross(l) {
+    const out = [];
+    for (let k = 1; k < NP; k++) if ((pul[k - 1] < l) !== (pul[k] < l))
+      out.push({ t: k / PR, v: Math.abs(pul[k] - pul[k - 1]) * PR });
+    return out;
+  }
+  function simulate() {
+    ev = []; tR = null;
+    let mode = truth === 'S' ? 0 : 2; // 0 ground singlet, 1 stranded singlet, 2 blocked triplet
+    const swappable = truth === 'S' || Math.random() < 1 / 3; // only T_minus anticrosses with S
+    for (let k = 0; k < NP; k++) {
+      const y = pul[k], yp = k ? pul[k - 1] : 0, v = Math.abs(y - yp) * PR, up = y > yp;
+      if (k && (yp < E_ST) !== (y < E_ST)) {
+        const rel = mode !== 1 && swappable, ad = Math.random() > Math.exp(-A_ST / Math.max(v, 1e-4));
+        if (rel && ad) mode = mode === 0 ? 2 : 0;
+        ev.push({ t: k / PR, y: E_ST, kind: 'st', hit: rel && ad, rel, up });
+      }
+      if (k && (yp < E_C) !== (y < E_C)) {
+        const rel = mode !== 2, dia = Math.random() < Math.exp(-A_C / Math.max(v, 1e-4));
+        if (rel && dia) mode = mode === 0 ? 1 : 0;
+        ev.push({ t: k / PR, y: E_C, kind: 'c', hit: !dia, rel, up });
+      }
+      if (mode !== 0 && y > E_C && Math.random() < (mode === 1 ? EXC : 1) / t1At(y) / PR) {
+        mode = 0; if (tR === null) tR = k / PR;
+      }
+      md[k] = mode;
+      const d = y - E_C;
+      sig[k] = mode === 2 ? 1 : mode === 1 ? fq(d) : 1 - fq(d);
+    }
+  }
+
+  function level(tt) {
+    if (LV[lv].pulse) return sig[clamp(Math.floor(tt * PR), 0, NP - 1)];
+    if (truth === 'S') return Math.exp(-tt * TUN);
+    return (tR !== null && tt >= tR) ? Math.exp(-(tt - tR) * TUN) : 1;
+  }
+  function gen(upTo) {
+    const n = Math.min(Math.floor(upTo * FS), TMAX * FS), sg = LV[lv].sigma;
+    while (smp.length < n) {
+      const k = smp.length;
+      smp.push(level((k + 0.5) / FS) + sg * gauss());
+      const a = Math.max(0, k - WIN + 1); let s = 0;
+      for (let j = a; j <= k; j++) s += smp[j];
+      sm.push(s / (k - a + 1));
+    }
+  }
+  function drawDD(mode) {
+    const e = (x, y, txt) => `<circle class="el" cx="${x}" cy="${y}" r="13"/><text class="el-t" x="${x}" y="${y}">${txt}</text>`;
+    let g = `<rect class="gate" x="36" y="-8" width="48" height="30" rx="8"/><rect class="gate" x="102" y="-8" width="16" height="44" rx="6"/><rect class="gate" x="136" y="-8" width="48" height="30" rx="8"/>
+      <circle class="dot" cx="60" cy="82" r="34"/><circle class="dot" cx="160" cy="82" r="34"/>
+      <text class="sen-t" x="201" y="36">センサー</text><circle class="sen" cx="205" cy="52" r="8"/>`;
+    let cap = '';
+    if (mode === 'hidden') { g += e(60, 82, '?') + e(160, 82, '?'); cap = 'スピンのペアは？'; }
+    else if (mode === 'S' || mode === 'Tr' || mode === 'Ts') {
+      g += `<path class="hop" d="M62 66 Q104 26 142 62"/>` + e(148, 82, '↑') + e(174, 82, '↓');
+      cap = mode === 'S' ? 'S：反対向き → 右へ移れた'
+        : mode === 'Tr' ? 'T → 途中でSに変化（緩和）' : 'T → 入れかえ線でSに化けた';
+    } else if (mode === 'Sx') {
+      g += e(60, 82, '↑') + e(160, 82, '↓') + `<path class="hop" d="M62 66 Q104 26 142 62"/>
+        <line class="blk" x1="102" y1="32" x2="118" y2="52"/><line class="blk" x1="118" y1="32" x2="102" y2="52"/>`;
+      cap = 'S：急ぎすぎて乗り移れなかった';
+    } else {
+      g += e(60, 82, '↑') + e(160, 82, '↑') + `<line class="blk" x1="102" y1="72" x2="118" y2="92"/><line class="blk" x1="118" y1="72" x2="102" y2="92"/>`;
+      cap = mode === 'St' ? 'S → 入れかえ線でTに化けた' : 'T：同じ向き → 通せんぼ';
+    }
+    g += `<text class="cap" x="110" y="138">${cap}</text>`;
+    svg.innerHTML = g;
+  }
+  function hud() {
+    $('#cRound').textContent = clamp(round, 1, ROUNDS) + '/' + ROUNDS;
+    $('#cOk').textContent = nOk; $('#cScore').textContent = score;
+    const sk = $('#cStreak'); sk.textContent = streak; sk.parentElement.classList.toggle('hot', streak >= 2);
+    const b = store.get('C' + lv, null); $('#cBest').textContent = b == null ? '—' : b;
+  }
+  const setDecide = on => { bS.disabled = !on; bT.disabled = !on; };
+  function reset() {
+    token++; state = 'idle'; round = 0; score = 0; nOk = 0; times = []; smp = []; sm = []; t = 0; ans = null; tR = null;
+    streak = 0; maxStreak = 0; nFast = 0; ev = []; clearStamp();
+    log.innerHTML = ''; setDecide(false); main.disabled = false;
+    main.textContent = LV[lv].pulse ? 'パルスを実行' : '読み出し開始'; attn(main, true);
+    st.textContent = LV[lv].intro; hideOv(ov); drawDD('hidden'); hud();
+    if (LV[lv].pulse) prepDesign(true);
+  }
+  function prepDesign(first) {
+    round++; state = 'design'; setDecide(false); main.disabled = false;
+    main.textContent = 'パルスを実行'; attn(main, true);
+    smp = []; sm = []; t = 0; ans = null; ansT = 0; tR = null; ev = []; clearStamp();
+    if (!first) st.textContent = `ペア${round}：パルスを直してから「パルスを実行」。`;
+    hideOv(ov); drawDD('hidden'); diag(); hud();
+  }
+  function startRound() {
+    if (!LV[lv].pulse) round++;
+    truth = Math.random() < 0.5 ? 'S' : 'T';
+    if (LV[lv].pulse) simulate();
+    else tR = truth === 'T' ? -LV[lv].T1 * Math.log(1 - Math.random()) : null;
+    smp = []; sm = []; t = 0; ans = null; ansT = 0;
+    state = 'run'; setDecide(true); main.disabled = true; main.textContent = '読み出し中…';
+    clearStamp(); attn(main, false); sfx.play(round === 1 ? 'start' : 'tap');
+    st.textContent = `ペア${round}：信号を見て、S か T かを当てよう。`;
+    hideOv(ov); drawDD('hidden'); hud();
+  }
+  function diag() {
+    if (!LV[lv].pulse) return;
+    const cs = cross(E_ST), cc = cross(E_C);
+    let ps = 1; cs.forEach(c => { const pd = Math.exp(-A_ST / Math.max(c.v, 1e-4)); ps = ps * pd + (1 - ps) * (1 - pd); });
+    let pg = 1; cc.forEach(c => { const pd = Math.exp(-A_C / Math.max(c.v, 1e-4)); pg = pg * (1 - pd) + (1 - pg) * pd; });
+    let dwell = 0, integ = 0, arrive = null;
+    for (let k = 0; k < NP; k++) if (pul[k] > E_C) {
+      if (arrive === null) arrive = k / PR;
+      dwell += 1 / PR; integ += 1 / PR / t1At(pul[k]);
+    }
+    if (arrive === null) {
+      dg.innerHTML = '<div><span>まだ読み出しゾーンに届いていません<span class="dt">グラフをなぞって、青い線より上まで電圧を持ち上げよう。</span></span></div>';
+      return;
+    }
+    const t1e = dwell / integ, con = fq(pul[NP - 1] - E_C);
+    const row = (p, name, val, sub) => {
+      const g = p >= 0.85 ? 'g' : p >= 0.6 ? 'y' : 'r', m = p >= 0.85 ? '◎' : p >= 0.6 ? '○' : '△';
+      return `<div><span>${name}<span class="dt">${sub}</span></span><b class="${g}">${m} ${val}</b></div>`;
+    };
+    dg.innerHTML =
+      row(ps, 'ピンクの線をサッと通れたか', Math.round(ps * 100) + '%', 'スピンが化けずに残る確率') +
+      row(pg, '青い線をゆっくり通れたか', Math.round(pg * 100) + '%', '電子が右の箱へ移れる確率') +
+      row(con, '信号の強さ', Math.round(con * 100) + '%', `ゾーン到着 ${arrive.toFixed(1)} µs（深いほど強い）`) +
+      row(clamp(t1e / 3, 0, 1), '通せんぼが解けるまで', t1e.toFixed(1) + ' µs', '深いほど早く解けます');
+  }
+  function answer(x) {
+    if (state !== 'run' && state !== 'wait') return;
+    const early = state === 'run';
+    ans = x; ansT = t; gen(TMAX);
+    const ok = x === truth, bonus = ok && early ? Math.round(60 * Math.max(0, 1 - t / 4)) : 0;
+    streak = ok ? streak + 1 : 0; maxStreak = Math.max(maxStreak, streak);
+    const fast = ok && early && t < (LV[lv].fastT || 1.2), mult = ok ? 1 + 0.1 * Math.min(streak - 1, 4) : 0;
+    const pts = ok ? Math.round((100 + bonus) * mult) : 0;
+    score += pts; if (ok) nOk++; if (fast) nFast++; times.push(t);
+    stamp.textContent = ok ? '正解' : 'ハズレ'; stamp.className = 'stamp ' + (ok ? 'ok' : 'ng');
+    void stamp.offsetWidth; stamp.classList.add('show'); sfx.play('stamp');
+    if (ok) {
+      setTimeout(() => sfx.play(fast ? 'perfect' : 'ok'), 120);
+      fx.pop(box, '+' + pts, 50, 40, 'good');
+      if (fast) fx.pop(box, '名推理！', 50, 57, 'perfect');
+      if (streak >= 2) { fx.pop(box, streak + '連続正解！', 26, 76, 'combo'); setTimeout(() => sfx.play('combo', Math.min(streak, 6)), 320); }
+      fx.burstEl(stamp, 0.5, 0.5, { n: fast ? 36 : 20, speed: 230 });
+    } else {
+      setTimeout(() => sfx.play('miss'), 100); fx.shake(stage);
+    }
+    setDecide(false);
+    const relaxedBefore = tR !== null && tR < ansT, relaxedShown = tR !== null && tR < TMAX;
+    let msg;
+    if (LV[lv].pulse) {
+      const swapped = ev.some(e => e.kind === 'st' && e.hit);
+      const stranded = ev.some(e => e.kind === 'c' && e.rel && e.up && !e.hit);
+      drawDD(truth === 'S' ? (swapped ? 'St' : stranded ? 'Sx' : 'S') : (swapped ? 'Ts' : relaxedBefore ? 'Tr' : 'T'));
+      if (swapped) msg = truth === 'S'
+        ? 'ピンクの線をゆっくり通ったので、S がトリプレットに化けました（断熱遷移）。ここはもっとサッと通り抜けよう。'
+        : 'ピンクの線をゆっくり通ったので、T が S に化けました。すきまのせまいこの線は、速く通れば無視できます。';
+      else if (truth === 'S' && stranded) msg = '青い線を急ぎすぎて、電子が取り残されました。信号が高いままなので、S なのに T に見えてしまいます。'
+        + (relaxedBefore ? ' そのあと自然に落ちたのが、あの下がり方です。' : '');
+      else if (truth === 'T' && relaxedBefore) msg = '読み出しゾーンで待ちすぎて、通せんぼが解けました（緩和）。もっと早く判定するか、ゾーンを浅くしてみよう。';
+      else msg = ok
+        ? (truth === 'S' ? 'ねらいどおり。S は右の箱へ移れて、信号が下がりました。' : '通せんぼが効いて、信号は高いままでした。')
+        : `本当は ${truth}。今回は信号そのものは素直だったので、雑音に負けたかも。太い線（平均）をもう少し見てから判定しよう。`;
+      if (!relaxedBefore && relaxedShown) msg += ' 判定のあと信号が落ちているのも見てみよう。';
+    } else {
+      drawDD(truth === 'S' ? 'S' : relaxedBefore ? 'Tr' : 'T');
+      if (truth === 'S') msg = ok ? '反対向きのペア（S）は右の箱へ移れるので、信号がすぐ下がりました。' : '本当は S。雑音で信号が高く見えてしまったかも。太い線を見よう。';
+      else if (relaxedBefore) msg = ok ? '途中で下がったのは、通せんぼが解けた（緩和した）から。よく見抜きました！' : '本当は T。待っている間に状態が変わって（緩和）、信号が下がってしまいました。最初の高さがカギです。';
+      else msg = ok ? '同じ向きのペア（T）は通せんぼされ、信号は高いままでした。' : '本当は T（信号は高いまま）。雑音にだまされたかも。';
+      if (!relaxedBefore && relaxedShown) msg += ' 判定のあと、通せんぼが解けて信号が下がっていく様子も見てみよう。';
+    }
+    showOv(ov, ok ? `正解！ ${truth}<small>+${pts}点（${ansT.toFixed(1)} µsで判定${mult > 1 ? `・連続 ×${mult.toFixed(1)}` : ''}）</small>` : `残念… 正解は ${truth}<small>${ansT.toFixed(1)} µsで判定</small>`, ok ? 'good' : 'bad');
+    const li = document.createElement('li');
+    li.innerHTML = `<span>ペア${round}<small>正解 ${truth}・${ansT.toFixed(1)} µs</small></span><span class="${ok ? 'ok' : 'ng'}">${ok ? '+' + pts : 'はずれ'}</span>`;
+    log.appendChild(li);
+    if (round >= ROUNDS) {
+      state = 'done';
+      const avg = times.reduce((a, b) => a + b, 0) / times.length;
+      const sup = !!LV[lv].pulse;
+      const rank = sup
+        ? (nOk >= 8 ? '読み出しの達人' : nOk >= 7 ? '名探偵' : nOk >= 6 ? '腕利き探偵' : '見習い探偵')
+        : (nOk >= 7 && avg < 1.8 ? '名探偵' : nOk >= 6 ? '腕利き探偵' : '見習い探偵');
+      const best = store.get('C' + lv, 0), rec = score > best;
+      if (rec) store.set('C' + lv, score);
+      store.set('unlockC', true); setUnlock('C', true);
+      main.disabled = false; main.textContent = 'もう一度'; attn(main, true);
+      const stars = sup ? (nOk >= 8 ? 3 : nOk >= 7 ? 2 : nOk >= 6 ? 1 : 0)
+        : (nOk >= 7 ? 3 : nOk >= 6 ? 2 : nOk >= 5 ? 1 : 0);
+      const grade = sup ? (nOk === ROUNDS && avg < 2.4 ? 'S' : ['C', 'C', 'B', 'A'][stars])
+        : (nOk === ROUNDS && avg < 1.5 ? 'S' : ['C', 'C', 'B', 'A'][stars]);
+      const my = token, sc = score;
+      setTimeout(() => {
+        if (my !== token) return;
+        result.open({
+          key: 'C', exKey: sup ? 'C2' : 'C', lv, mission: 'ミッション3 読む', score: sc, stars, rank: grade, rec,
+          title: sup
+            ? { S: 'パルス設計の達人！', A: '読み出しの名手！', B: 'いいパルス！', C: 'パルスを直してみよう' }[grade]
+            : { S: '伝説の名探偵！', A: '名探偵！', B: '腕利き探偵！', C: '見習い探偵' }[grade],
+          sub: `${ROUNDS}ペア中 ${nOk}ペア正解・平均 ${avg.toFixed(1)} µs・名推理 ${nFast}回・最大 ${maxStreak}連続`,
+          tip: grade === 'S' ? (sup ? 'パルスも判定もほぼ理想！ 本物の実験でもこの綱引きと戦っています。' : 'ぜんぶ正解で、しかも速い！ ほかのレベルにも挑戦しよう。')
+            : stars === 3 ? (sup ? '8ペア全部を平均2.4 µsより速く当てると Sランク！' : '8ペア全部を平均1.5 µsより速く当てると Sランク！')
+              : LV[lv].hint,
+          retry: () => { reset(); if (!LV[lv].pulse) startRound(); },
+          next: lv < LVNAMES.C.length - 1 ? () => { const b = $$('#cLv button')[lv + 1]; if (b) b.click(); if (!LV[lv].pulse) startRound(); } : null
+        });
+      }, 1100);
+      st.innerHTML = `<b>あなたは「${rank}」！</b> ${ROUNDS}ペア中 ${nOk}ペア正解、平均 ${avg.toFixed(1)} µs、合計 ${score}点。${rec ? 'ベスト更新！' : ''}<br>${msg}<br>「しくみを見る」で、スピンを読み出すしくみを確かめよう。`;
+    } else {
+      state = 'reveal'; main.disabled = false; main.textContent = '次のペアへ'; st.textContent = msg; attn(main, true);
+    }
+    hud();
+  }
+  function act() {
+    const now = performance.now(); if (now - lastAct < 250) return; lastAct = now;
+    if (state === 'design') startRound();
+    else if (state === 'idle' || state === 'reveal') { if (LV[lv].pulse) prepDesign(); else startRound(); }
+    else if (state === 'done') { reset(); if (!LV[lv].pulse) startRound(); }
+  }
+  main.addEventListener('click', act);
+  bS.addEventListener('click', () => answer('S'));
+  bT.addEventListener('click', () => answer('T'));
+  buildLevels($('#cLv'), LVNAMES.C, k => {
+    lv = k; const p = !!LV[lv].pulse;
+    $('#cPulseBox').hidden = !p; $('#cPulseBar').hidden = !p; $('#cHow4').hidden = !p; dg.hidden = !p;
+    reset();
+  }, 'C');
+  $('#cExplain').addEventListener('click', () => openExplain(LV[lv].pulse ? 'C2' : 'C'));
+  $('#cReset').addEventListener('click', () => { if (state === 'design') { defaultPulse(); diag(); sfx.play('tap'); } });
+
+  /* ---- hand-drawing the pulse ---- */
+  function paint(e) {
+    if (!geo) return;
+    const r = cv2.getBoundingClientRect();
+    const tt = clamp((e.clientX - r.left - geo.l) / (geo.rgt - geo.l), 0, 1) * TMAX;
+    const yy = clamp((geo.bt - (e.clientY - r.top)) / (geo.bt - geo.tp), 0, 1);
+    const p = { i: clamp(Math.round(tt * PR), 0, NP - 1), y: yy };
+    if (pLast) {
+      const a = Math.min(pLast.i, p.i), b = Math.max(pLast.i, p.i);
+      const ya = pLast.i <= p.i ? pLast.y : p.y, yb = pLast.i <= p.i ? p.y : pLast.y;
+      for (let k = a; k <= b; k++) raw[k] = b === a ? yb : ya + (yb - ya) * (k - a) / (b - a);
+    } else raw[p.i] = p.y;
+    pLast = p; shape(); diag();
+  }
+  cv2.addEventListener('pointerdown', e => {
+    if (state !== 'design' || !LV[lv].pulse) return;
+    e.preventDefault(); pDown = true; pLast = null;
+    try { cv2.setPointerCapture(e.pointerId); } catch (err) { /* not supported */ }
+    sfx.play('tap'); paint(e);
+  });
+  cv2.addEventListener('pointermove', e => { if (pDown) { e.preventDefault(); paint(e); } });
+  const penUp = () => { pDown = false; pLast = null; };
+  cv2.addEventListener('pointerup', penUp);
+  cv2.addEventListener('pointercancel', penUp);
+
+  function drawPulse() {
+    const { ctx, w, h } = fit(cv2);
+    const nar = w < 560, l = w * (nar ? 0.17 : 0.13), rgt = w * 0.97, tp = h * 0.13, bt = h * 0.78;
+    geo = { l, rgt, tp, bt };
+    const X = tt => l + tt / TMAX * (rgt - l), Y = y => bt - y * (bt - tp), F = fsz(w, 11);
+    ctx.fillStyle = hexA(C.ok, 0.1); ctx.fillRect(l, Y(1), rgt - l, Y(E_C) - Y(1));
+    ctx.strokeStyle = hexA(C.line, 0.8); ctx.lineWidth = 1;
+    ctx.fillStyle = C.muted; ctx.font = `500 ${F}px ${FONT}`; ctx.textAlign = 'center';
+    for (let s = 0; s <= TMAX; s++) {
+      ctx.beginPath(); ctx.moveTo(X(s), tp); ctx.lineTo(X(s), bt); ctx.stroke();
+      ctx.fillText(s + ' µs', X(s), bt + fsz(w, 15));
+    }
+    ctx.strokeStyle = C.line; ctx.beginPath(); ctx.moveTo(l, bt); ctx.lineTo(rgt, bt); ctx.stroke();
+    const mark = (y, col, lab) => {
+      ctx.save(); ctx.setLineDash([7, 5]); ctx.strokeStyle = col; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(l, Y(y)); ctx.lineTo(rgt, Y(y)); ctx.stroke(); ctx.restore();
+      ctx.fillStyle = col; ctx.textAlign = 'right'; ctx.font = `700 ${F}px ${FONT}`;
+      ctx.fillText(lab, l - 6, Y(y) + 4);
+    };
+    mark(E_C, C.spin, nar ? '乗り移り' : '乗り移り線');
+    mark(E_ST, C.e, nar ? '入れかえ' : '入れかえ線');
+    ctx.fillStyle = hexA(C.ok, 0.95); ctx.textAlign = 'left'; ctx.font = `700 ${F}px ${FONT}`;
+    ctx.fillText('読み出しゾーン', l + 7, Y(1) + F + 3);
+    ctx.fillStyle = C.muted; ctx.textAlign = 'right'; ctx.font = `500 ${F}px ${FONT}`;
+    ctx.fillText('そろい', l - 6, Y(0) + 4);
+    ctx.fillStyle = C.ink2; ctx.textAlign = 'left'; ctx.font = `700 ${F}px ${FONT}`;
+    ctx.fillText('電圧（右の箱の下げぐあい）', l + 7, tp - 3);
+    const path = (arr, col, lw) => {
+      ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.lineJoin = 'round'; ctx.beginPath();
+      for (let k = 0; k < NP; k += 2) { const x = X(k / PR), y = Y(arr[k]); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+      ctx.stroke();
+    };
+    path(raw, hexA(C.ink2, 0.3), 1.5);
+    path(pul, C.gate, 3);
+    if (state === 'run' || state === 'wait' || ans !== null) {
+      const tt = ans !== null ? ansT : t, k = clamp(Math.floor(tt * PR), 0, NP - 1);
+      ctx.strokeStyle = hexA(C.ink, 0.5); ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(X(tt), tp); ctx.lineTo(X(tt), bt); ctx.stroke();
+      ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(X(tt), Y(pul[k]), 6, 0, Math.PI * 2); ctx.fill();
+    }
+    if (ans !== null) {
+      ctx.font = `700 ${fsz(w, 11.5)}px ${FONT}`;
+      ev.forEach(e => {
+        if (!e.up || (e.kind === 'st' && !e.rel)) return;
+        const held = e.kind === 'c' && !e.rel; // blocked triplet: nothing happens at the charge line
+        const bad = !held && (e.kind === 'st' ? e.hit : !e.hit), x = X(e.t), y = Y(e.y);
+        ctx.fillStyle = held ? C.ink2 : bad ? C.bad : C.ok;
+        ctx.beginPath(); ctx.arc(x, y, 6.5, 0, Math.PI * 2); ctx.fill();
+        const rs = x < (l + rgt) / 2;
+        ctx.textAlign = rs ? 'left' : 'right';
+        ctx.fillText(held ? '通せんぼ中' : e.kind === 'st' ? (e.hit ? '化けた' : 'サッと通過') : (e.hit ? '乗り移れた' : '取り残された'),
+          x + (rs ? 11 : -11), y - 8);
+      });
+      if (tR !== null) {
+        ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = C.bad; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(X(tR), tp); ctx.lineTo(X(tR), bt); ctx.stroke(); ctx.restore();
+        const rs = tR < TMAX * 0.7;
+        ctx.fillStyle = C.bad; ctx.textAlign = rs ? 'left' : 'right';
+        ctx.fillText('ここで信号が落ちた', X(tR) + (rs ? 6 : -6), bt - 7);
+      }
+    } else if (state === 'design') {
+      ctx.fillStyle = hexA(C.ink2, 0.75); ctx.textAlign = 'right'; ctx.font = `700 ${fsz(w, 12)}px ${FONT}`;
+      ctx.fillText('なぞって形を変えよう', rgt - 6, bt - 7);
+    }
+  }
+
+  function draw() {
+    const { ctx, w, h } = fit(cv);
+    const nar = w < 560, l = w * (nar ? 0.16 : 0.12), rgt = w * 0.97, tp = h * 0.2, bt = h * 0.88, yMin = -1.05, yMax = 2.05;
+    const X = tt => l + tt / TMAX * (rgt - l), Y = v => clamp(bt - (v - yMin) / (yMax - yMin) * (bt - tp), tp - 2, bt + 2);
+    ctx.lineWidth = 1; ctx.strokeStyle = C.line; ctx.fillStyle = C.muted; ctx.font = `500 ${fsz(w, 11)}px ${FONT}`; ctx.textAlign = 'center';
+    for (let s = 0; s <= TMAX; s++) { ctx.beginPath(); ctx.moveTo(X(s), tp); ctx.lineTo(X(s), bt); ctx.stroke(); ctx.fillText(s + ' µs', X(s), bt + fsz(w, 16)); }
+    // reference lines
+    const ref = (v, col, txt, dash) => {
+      ctx.save(); ctx.setLineDash(dash); ctx.strokeStyle = col; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(l, Y(v)); ctx.lineTo(rgt, Y(v)); ctx.stroke(); ctx.restore();
+      ctx.fillStyle = col; ctx.textAlign = 'right'; ctx.font = `700 ${fsz(w, 11.5)}px ${FONT}`; ctx.fillText(txt, l - 6, Y(v) + 4);
+    };
+    const sLo = LV[lv].pulse ? 1 - fq(pul[NP - 1] - E_C) : 0;
+    ref(1, C.e, 'T（高い）', [6, 5]);
+    ref(sLo, C.spin, 'S（低い）', [6, 5]);
+    ref((1 + sLo) / 2, C.muted, 'しきい値', [2, 5]);
+    if (!nar) { ctx.save(); ctx.translate(fsz(w, 13), (tp + bt) / 2); ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center'; ctx.fillStyle = C.ink2; ctx.font = `700 ${fsz(w, 12)}px ${FONT}`; ctx.fillText('センサー信号', 0, 0); ctx.restore(); }
+    const nd = ans !== null ? Math.floor(ansT * FS) : smp.length;
+    const seg = (arr, a, b, col, lw) => {
+      if (b - a < 2) return;
+      ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.lineJoin = 'round'; ctx.beginPath();
+      for (let k = a; k < b; k++) { const x = X((k + 0.5) / FS), y = Y(arr[k]); k === a ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+      ctx.stroke();
+    };
+    seg(smp, 0, Math.min(nd, smp.length), hexA(C.ink2, 0.3), 1);
+    seg(sm, 0, Math.min(nd, sm.length), C.ink, 2.8);
+    if (ans !== null) {
+      seg(smp, Math.max(0, nd - 1), smp.length, hexA(C.ink2, 0.16), 1);
+      seg(sm, Math.max(0, nd - 1), sm.length, hexA(C.ink, 0.3), 2.4);
+      // truth
+      ctx.strokeStyle = hexA(C.ok, 0.9); ctx.lineWidth = 3; ctx.beginPath();
+      for (let k = 0; k <= 250; k++) { const tt = TMAX * k / 250, x = X(tt), y = Y(level(tt)); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+      ctx.stroke();
+      ctx.fillStyle = C.ok; ctx.textAlign = 'left'; ctx.font = `700 ${fsz(w, 12)}px ${FONT}`;
+      ctx.textAlign = 'right'; ctx.fillText('緑の線：本当の信号（雑音なし）', rgt - 6, tp + fsz(w, 16));
+      if (tR !== null && tR < TMAX) {
+        ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = C.ok; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(X(tR), tp); ctx.lineTo(X(tR), bt); ctx.stroke(); ctx.restore();
+        ctx.textAlign = tR > TMAX * 0.7 ? 'right' : 'left';
+        ctx.fillText(LV[lv].pulse ? 'ここで信号が落ちた' : 'ここで通せんぼが解けた', X(tR) + (tR > TMAX * 0.7 ? -6 : 6), bt - 8 - fsz(w, 20));
+      }
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(X(ansT), tp); ctx.lineTo(X(ansT), bt); ctx.stroke();
+      ctx.fillStyle = C.ink; ctx.textAlign = 'center'; ctx.font = `700 ${fsz(w, 12)}px ${FONT}`;
+      ctx.fillText('判定', X(ansT), bt - 8);
+    } else if (state === 'run' || state === 'wait') {
+      ctx.strokeStyle = hexA(C.ink, 0.5); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(X(t), tp); ctx.lineTo(X(t), bt); ctx.stroke();
+    }
+    if (state === 'wait') {
+      ctx.fillStyle = C.bad; ctx.textAlign = 'center'; ctx.font = `700 ${fsz(w, 15)}px ${FONT}`;
+      ctx.fillText('時間切れ。S か T か判定しよう', (l + rgt) / 2, tp + fsz(w, 20));
+    }
+    if (state === 'design') {
+      const txt = '上のグラフでパルスを作り、「パルスを実行」を押そう', fs = fsz(w, 14);
+      ctx.font = `700 ${fs}px ${FONT}`; ctx.textAlign = 'center';
+      const tw = ctx.measureText(txt).width, cx = (l + rgt) / 2, cy = (tp + bt) / 2;
+      ctx.fillStyle = C.panel2; rrect(ctx, cx - tw / 2 - 14, cy - fs, tw + 28, fs * 2, 10); ctx.fill();
+      ctx.fillStyle = C.muted; ctx.fillText(txt, cx, cy + fs * 0.35);
+    }
+  }
+  function frame(dt) {
+    if (state === 'run') {
+      t += dt;
+      if (t >= TMAX) { t = TMAX; state = 'wait'; }
+      gen(t);
+    }
+    draw();
+    if (LV[lv].pulse) drawPulse();
+  }
+  defaultPulse();
+  return {
+    enter() { reset(); },
+    leave() { token++; if (state === 'run' || state === 'wait') reset(); },
+    frame,
+    key(e) {
+      if (state === 'run' || state === 'wait') {
+        if (e.code === 'ArrowLeft' || e.code === 'KeyS') { answer('S'); return true; }
+        if (e.code === 'ArrowRight' || e.code === 'KeyT') { answer('T'); return true; }
+        if (e.code === 'Space' || e.code === 'Enter') return true;
+      }
+      if (e.code === 'Space' || e.code === 'Enter') { act(); return true; }
+      return false;
+    }
+  };
+})();
+
+/* ============ Landau-Zener core: H = (eps/2) sz + (gap/2) sx, basis |L>,|R> ============ */
+const LZ = { T: 8, NS: 800, GAP: 3, EMAX: 14, E0: -12, PIN: 0.15 };
+function lzRun(eps) { // eps: Float32Array(NS+1) samples at t = k*T/NS; returns traces
+  const n = eps.length - 1, dt = LZ.T / n, sub = 4, h = dt / sub, G = LZ.GAP;
+  let ar, ai = 0, br, bi = 0; // amplitudes of |L>, |R>; start in the ground state at eps[0]
+  { const W = Math.hypot(eps[0], G), th = Math.acos(clamp(eps[0] / W, -1, 1)); ar = -Math.sin(th / 2); br = Math.cos(th / 2); }
+  const pR = new Float32Array(n + 1), pG = new Float32Array(n + 1), pC = new Float32Array(n + 1);
+  const ground = (e, k) => { const W = Math.hypot(e, G), th = Math.acos(clamp(e / W, -1, 1)), gs = -Math.sin(th / 2), gc = Math.cos(th / 2); pG[k] = Math.pow(gs * ar + gc * br, 2) + Math.pow(gs * ai + gc * bi, 2); };
+  const readR = k => eps[k] >= 0 ? pG[k] : 1 - pG[k]; // readout after moving deep into detuning adiabatically
+  ground(eps[0], 0); pR[0] = readR(0); pC[0] = br * br + bi * bi;
+  for (let k = 0; k < n; k++) {
+    for (let s = 0; s < sub; s++) {
+      const e = eps[k] + (eps[k + 1] - eps[k]) * (s + 0.5) / sub, W = Math.hypot(e, G), c = Math.cos(W * h / 2), sn = Math.sin(W * h / 2), nz = e / W, nx = G / W;
+      // U = c I - i sn (nx sx + nz sz)
+      const nar = c * ar + sn * (nz * ai + nx * bi), nai = c * ai - sn * (nz * ar + nx * br);
+      const nbr = c * br + sn * (nx * ai - nz * bi), nbi = c * bi - sn * (nx * ar - nz * br);
+      ar = nar; ai = nai; br = nbr; bi = nbi;
+    }
+    ground(eps[k + 1], k + 1); pR[k + 1] = readR(k + 1); pC[k + 1] = br * br + bi * bi;
+  }
+  return { pR, pG, pC, final: pR[n] };
+}
+
+/* ============ GAME D: draw a pulse (Landau-Zener) ============ */
+games.gD = (() => {
+  const TASKS = [
+    { goal: 'R', end: 1, th: [0.6, 0.85, 0.95], S: 0.985, title: 'そっと運べ',
+      intro: '課題1「そっと運べ」：電子を右の箱へ確実に移そう。最後は右上の緑ゾーン（電圧＋）で終わること。',
+      hint: 'すれちがい地点（真ん中の帯）を、ゆっくり通るのがコツ。一気に通ると電子はすり抜けてしまいます。' },
+    { goal: 'L', end: 1, th: [0.6, 0.8, 0.9], S: 0.935, title: 'すり抜けろ',
+      intro: '課題2「すり抜けろ」：電圧は右上の緑ゾーンまで上げるのに、電子は左の箱に残したままにしよう。',
+      hint: 'すれちがい地点を一気に（たてにまっすぐ）通り抜けると、電子は乗りかえられずに左に残ります。' },
+    { goal: 'H', end: 1, th: [0.7, 0.84, 0.94], S: 0.98, title: '半分こ',
+      intro: '課題3「半分こ」：右上の緑ゾーンで終わって、電子が右にいる確率をちょうど50%にしよう（量子の重ね合わせ）。',
+      hint: 'ゆっくりだと右100%、一気だと右0%。その中間の速さがあるはず。約1ナノ秒で上から下まで横切るくらいが目安。' },
+    { goal: 'R', end: -1, th: [0.5, 0.7, 0.85], S: 0.93, title: '行って帰って',
+      intro: '課題4「行って帰って」：最後は右下の緑ゾーン（電圧−）にもどすのに、電子は右の箱へ移っているようにしよう。',
+      hint: '方法は2つ。①すれちがい地点（真ん中）に一気に飛びこみ、約1ナノ秒待って一気にもどる。②半分こする速さで行って、少し待って、同じ速さでもどる（待つ時間で干渉が変わる）。' }
+  ];
+  const cv = $('#cvD'), cv2 = $('#cvD2'), cv3 = $('#cvD3'), main = $('#dMain'), st = $('#dStatus'), log = $('#dLog'), ov = $('#dOv'),
+    box = cv.parentElement, stage = $('#dStage');
+  const N = LZ.NS, T = LZ.T, EM = LZ.EMAX, ZONE = 9, ZT = 0.4, PLAY_MS = 2600, SHOT_MS = 1200;
+  let lv = 0, state = 'draw', eps = new Float32Array(N + 1), run = null, t0 = 0, shots = [], tries = 0, token = 0,
+    drawing = false, last = null, first = null, geo = null, shotSnd = 0, lastQ = null;
+  const task = () => TASKS[lv];
+  const quality = pR => task().goal === 'R' ? pR : task().goal === 'L' ? 1 - pR : 1 - 2 * Math.abs(pR - 0.5);
+  function flat() { eps = new Float32Array(N + 1).fill(LZ.E0); }
+  function hud() {
+    $('#dTask').textContent = (lv + 1) + '/' + TASKS.length; $('#dTry').textContent = tries;
+    const b = store.get('D' + lv, null); $('#dBest').textContent = b == null ? '—' : b + '点';
+  }
+  function reset(keep) {
+    token++; state = 'draw'; run = null; shots = []; lastQ = null;
+    if (!keep) { flat(); tries = 0; log.innerHTML = ''; }
+    main.disabled = false; attn(main, false); hideOv(ov);
+    st.textContent = task().intro; hud();
+  }
+  const kOf = tt => clamp(Math.round(tt / T * N), 0, N);
+  function paint(k0, e0, k1, e1) {
+    if (k1 < k0) { [k0, k1] = [k1, k0]; [e0, e1] = [e1, e0]; }
+    for (let k = k0; k <= k1; k++) eps[k] = k1 === k0 ? e1 : e0 + (e1 - e0) * (k - k0) / (k1 - k0);
+    const kp = kOf(LZ.PIN); for (let k = 0; k <= kp; k++) eps[k] = LZ.E0;
+  }
+  function ptr(e) {
+    const rc = cv.getBoundingClientRect(), x = e.clientX - rc.left, y = e.clientY - rc.top;
+    return { k: kOf((x - geo.l) / (geo.r - geo.l) * T), e: clamp((geo.mid - y) / geo.half * EM, -13.5, 13.5) };
+  }
+  cv.addEventListener('pointerdown', e => {
+    if (!geo || state === 'play' || state === 'shots') return;
+    if (state === 'done') { state = 'draw'; run = null; shots = []; hideOv(ov); }
+    e.preventDefault(); drawing = true; try { cv.setPointerCapture(e.pointerId); } catch (er) { /* ignore */ }
+    const p = ptr(e); paint(p.k, p.e, p.k, p.e); last = p; first = p; sfx.play('draw');
+  });
+  cv.addEventListener('pointermove', e => {
+    if (!drawing) return;
+    const p = ptr(e); paint(last.k, last.e, p.k, p.e); last = p;
+  });
+  const stop = () => {
+    if (!drawing) return;
+    drawing = false; attn(main, true);
+    if (last && first && last.k >= first.k) for (let k = last.k; k <= N; k++) eps[k] = last.e; // hold the last voltage
+  };
+  cv.addEventListener('pointerup', stop); cv.addEventListener('pointercancel', stop);
+  $('#dClear').addEventListener('click', () => { if (state === 'play' || state === 'shots') return; flat(); state = 'draw'; run = null; shots = []; hideOv(ov); sfx.play('tap'); st.textContent = task().intro; });
+  $('#dSample').addEventListener('click', () => {
+    if (state === 'play' || state === 'shots') return;
+    const a = eps.slice(), W = 6;
+    for (let k = 0; k <= N; k++) { let s = 0, c = 0; for (let j = Math.max(0, k - W); j <= Math.min(N, k + W); j++) { s += a[j]; c++; } eps[k] = s / c; }
+    paint(0, LZ.E0, 0, LZ.E0); state = 'draw'; run = null; shots = []; hideOv(ov); sfx.play('tap');
+  });
+  function judge() {
+    if (state === 'play' || state === 'shots') return;
+    const kz = kOf(T - 0.1); let avg = 0; for (let k = kz; k <= N; k++) avg += eps[k]; avg /= (N - kz + 1);
+    if (task().end > 0 ? avg < ZONE : avg > -ZONE) {
+      sfx.play('miss'); fx.shake(stage);
+      showOv(ov, 'ゴールゾーンで終わろう！<small>線の最後を' + (task().end > 0 ? '右上' : '右下') + 'の緑ゾーンまで描いてね</small>', 'bad');
+      return;
+    }
+    run = lzRun(eps); tries++; token++; state = 'play'; t0 = performance.now(); shots = []; shotSnd = 0;
+    main.disabled = true; attn(main, false); hideOv(ov); sfx.play('whirr');
+    st.textContent = '描いたパルスどおりに電圧を動かしています…'; hud();
+  }
+  main.addEventListener('click', judge);
+  function finish() {
+    state = 'done'; main.disabled = false;
+    const pR = run.final, q = quality(pR), th = task().th, stars = q >= th[2] ? 3 : q >= th[1] ? 2 : q >= th[0] ? 1 : 0;
+    const rank = stars === 3 && q >= task().S ? 'S' : ['C', 'C', 'B', 'A'][stars], score = Math.round(q * 1000);
+    const nR = shots.filter(Boolean).length;
+    const best = store.get('D' + lv, 0), rec = score > best; if (rec) store.set('D' + lv, score);
+    store.set('unlockD', true); setUnlock('D', true);
+    lastQ = q;
+    if (stars >= 2) { sfx.play(stars === 3 ? 'perfect' : 'ok'); fx.burstEl(cv3, 0.5, 0.7, { n: stars === 3 ? 40 : 22 }); } else { sfx.play('miss'); }
+    showOv(ov, `${'★'.repeat(stars)}${'☆'.repeat(3 - stars)} 右の確率 ${Math.round(pR * 100)}%<small>100回の読み出しで 右 ${nR}回・${score}点</small>`, stars >= 2 ? 'good' : 'bad');
+    const li = document.createElement('li');
+    li.innerHTML = `<span>${tries}回目<small>右の確率 ${Math.round(pR * 100)}%</small></span><span class="${stars >= 2 ? 'ok' : 'ng'}">${score}点</span>`;
+    log.prepend(li); while (log.children.length > 6) log.lastChild.remove();
+    let msg;
+    if (stars === 3) msg = 'ねらいどおりの量子操作ができました！';
+    else if (task().goal === 'R' && task().end > 0) msg = pR < 0.5 ? 'すれちがい地点を速く通りすぎて、電子がすり抜けたようです。もっとゆっくり。' : 'おしい！ すれちがい地点の近くをさらにゆっくり通ってみよう。';
+    else if (task().goal === 'L') msg = pR > 0.5 ? '通るのがゆっくりすぎて、電子が右へ乗りかえました。もっと一気に！' : 'もう少し一気に通り抜けよう。たてにまっすぐが理想。';
+    else if (task().goal === 'H') msg = pR > 0.5 ? `右が${Math.round(pR * 100)}%で多すぎ。もう少し速く通ろう。` : `右が${Math.round(pR * 100)}%で少なすぎ。もう少しゆっくり通ろう。`;
+    else msg = task().hint;
+    st.innerHTML = `${msg}<br><small>線を描き足して、もう一度「判定する」で何度でも挑戦できます。</small>`;
+    hud();
+    const my = token;
+    setTimeout(() => {
+      if (my !== token) return;
+      result.open({
+        key: 'D', lv, mission: 'ミッション4 描く', score, stars, rank, rec,
+        title: { S: '神のパルス職人！', A: '一流のパルス職人！', B: 'なかなかの腕前！', C: '描き方を工夫しよう' }[rank],
+        sub: `課題「${task().title}」・右の箱にいる確率 ${Math.round(pR * 100)}%（100回読み出しで右 ${nR}回）`,
+        tip: rank === 'S' ? 'かんぺきな量子操作！ 次の課題にも挑戦しよう。' : task().hint,
+        retry: () => reset(true), next: lv < TASKS.length - 1 ? () => { const b = $$('#dLv button')[lv + 1]; if (b) b.click(); } : null
+      });
+    }, 1000);
+  }
+  buildLevels($('#dLv'), LVNAMES.D, k => { lv = k; reset(false); }, 'D');
+  $('#dExplain').addEventListener('click', () => openExplain('D'));
+
+  function drawPulse(prog) {
+    const { ctx, w, h } = fit(cv);
+    const l = w * 0.1, r = w * 0.97, top = h * 0.08, bot = h * 0.87, mid = (top + bot) / 2, half = (bot - top) / 2;
+    geo = { l, r, mid, half };
+    const X = tt => l + tt / T * (r - l), Y = e => mid - e / EM * half;
+    // crossing band
+    ctx.fillStyle = hexA(C.gate, 0.16); ctx.fillRect(l, Y(LZ.GAP), r - l, Y(-LZ.GAP) - Y(LZ.GAP));
+    ctx.fillStyle = C.gate; ctx.font = `700 ${fsz(w, 11)}px ${FONT}`; ctx.textAlign = 'right';
+    ctx.fillText('すれちがい地点', r - 6, Y(LZ.GAP) - 5);
+    // goal zone
+    const zy0 = task().end > 0 ? Y(EM) : Y(-ZONE), zy1 = task().end > 0 ? Y(ZONE) : Y(-EM);
+    ctx.fillStyle = hexA(C.ok, 0.18); ctx.fillRect(X(T - ZT), zy0, X(T) - X(T - ZT), zy1 - zy0);
+    ctx.strokeStyle = C.ok; ctx.lineWidth = 1.5; ctx.strokeRect(X(T - ZT), zy0, X(T) - X(T - ZT), zy1 - zy0);
+    ctx.fillStyle = C.ok; ctx.textAlign = 'right'; ctx.fillText('ゴール', X(T - ZT) - 4, task().end > 0 ? zy1 - 4 : zy0 + 14);
+    // grid
+    ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.fillStyle = C.muted; ctx.font = `500 ${fsz(w, 10.5)}px ${FONT}`; ctx.textAlign = 'center';
+    for (let s = 0; s <= T; s++) { ctx.beginPath(); ctx.moveTo(X(s), top); ctx.lineTo(X(s), bot); ctx.stroke(); ctx.fillText(s + ' ns', X(s), bot + fsz(w, 14)); }
+    ctx.strokeStyle = C.ink2; ctx.beginPath(); ctx.moveTo(l, mid); ctx.lineTo(r, mid); ctx.stroke();
+    ctx.save(); ctx.translate(fsz(w, 13), mid); ctx.rotate(-Math.PI / 2); ctx.fillStyle = C.ink2; ctx.font = `700 ${fsz(w, 11.5)}px ${FONT}`; ctx.fillText('傾きゲートの電圧', 0, 0); ctx.restore();
+    ctx.textAlign = 'left'; ctx.fillStyle = C.ink2; ctx.font = `700 ${fsz(w, 10.5)}px ${FONT}`;
+    ctx.fillText('＋ 右の箱が低い', l + 4, top + 12); ctx.fillText('− 左の箱が低い', l + 4, bot - 5);
+    // pulse
+    ctx.strokeStyle = C.e; ctx.lineWidth = 3.5; ctx.lineJoin = 'round'; ctx.beginPath();
+    for (let k = 0; k <= N; k++) { const x = X(k / N * T), y = Y(eps[k]); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+    ctx.stroke();
+    ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(X(0), Y(LZ.E0), 5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = C.ink2; ctx.font = `700 ${fsz(w, 11)}px ${FONT}`; ctx.fillText('スタート', X(0) + 8, Y(LZ.E0) - 8);
+    if (prog != null) {
+      const tt = prog * T, k = kOf(tt);
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(X(tt), top); ctx.lineTo(X(tt), bot); ctx.stroke();
+      ctx.fillStyle = C.e; ctx.beginPath(); ctx.arc(X(tt), Y(eps[k]), 7, 0, Math.PI * 2); ctx.fill();
+    }
+    if (state === 'draw' && !drawing && eps.every(v => v === LZ.E0)) {
+      ctx.textAlign = 'center'; ctx.fillStyle = C.ink2; ctx.font = `700 ${fsz(w, 15)}px ${FONT}`;
+      ctx.fillText('ここに指やマウスで線を描こう →', (l + r) / 2, mid - half * 0.45);
+    }
+  }
+  function drawLevels(prog) {
+    const { ctx, w, h } = fit(cv2), G = LZ.GAP;
+    const l = w * 0.08, r = w * 0.96, top = h * 0.14, bot = h * 0.9, mid = (top + bot) / 2, EY = 8;
+    const X = e => l + (e + EM) / (2 * EM) * (r - l), Y = E => mid - E / EY * (bot - top) / 2;
+    ctx.fillStyle = C.ink2; ctx.font = `700 ${fsz(w, 11.5)}px ${FONT}`; ctx.textAlign = 'left';
+    ctx.fillText('エネルギーの図', l, top - 8);
+    ctx.save(); ctx.setLineDash([4, 5]); ctx.lineWidth = 1.5;
+    ctx.strokeStyle = hexA(C.spin, 0.7); ctx.beginPath(); ctx.moveTo(X(-EM), Y(-EM / 2)); ctx.lineTo(X(EM), Y(EM / 2)); ctx.stroke();
+    ctx.strokeStyle = hexA(C.e, 0.7); ctx.beginPath(); ctx.moveTo(X(-EM), Y(EM / 2)); ctx.lineTo(X(EM), Y(-EM / 2)); ctx.stroke(); ctx.restore();
+    ctx.font = `700 ${fsz(w, 10)}px ${FONT}`; ctx.fillStyle = C.spin; ctx.textAlign = 'right'; ctx.fillText('左の箱', X(EM) - 2, Y(EM / 2) + 14);
+    ctx.fillStyle = C.e; ctx.textAlign = 'left'; ctx.fillText('右の箱', X(-EM) + 2, Y(EM / 2) + 14);
+    [1, -1].forEach(sg => {
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 2.5; ctx.beginPath();
+      for (let k = 0; k <= 120; k++) { const e = -EM + 2 * EM * k / 120, E = sg * 0.5 * Math.hypot(e, G); k ? ctx.lineTo(X(e), Y(E)) : ctx.moveTo(X(e), Y(E)); }
+      ctx.stroke();
+    });
+    ctx.fillStyle = C.gate; ctx.textAlign = 'center'; ctx.font = `700 ${fsz(w, 10)}px ${FONT}`; ctx.fillText('すき間', X(0), Y(0) + 4);
+    let e = LZ.E0, pg = 1;
+    if (run && prog != null) { const k = kOf(prog * T); e = eps[k]; pg = run.pG[k]; }
+    else if (run) { e = eps[N]; pg = run.pG[N]; }
+    const Wv = 0.5 * Math.hypot(e, G), rmax = Math.max(7, w * 0.035);
+    [[-Wv, pg], [Wv, 1 - pg]].forEach(([E, p]) => {
+      if (p < 0.01) return;
+      const g = ctx.createRadialGradient(X(e), Y(E), 0, X(e), Y(E), rmax * 1.6);
+      g.addColorStop(0, hexA(C.e, 0.25 + 0.75 * p)); g.addColorStop(1, hexA(C.e, 0));
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(X(e), Y(E), rmax * (0.5 + 1.1 * Math.sqrt(p)), 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.fillStyle = C.muted; ctx.font = `500 ${fsz(w, 10)}px ${FONT}`; ctx.textAlign = 'right'; ctx.fillText('電圧 →', r, bot + 12);
+  }
+  function drawShots(prog, nShow) {
+    const { ctx, w, h } = fit(cv3);
+    const l = w * 0.08, r = w * 0.97, top = h * 0.12, bot = h * 0.5;
+    const X = tt => l + tt / T * (r - l), Y = p => bot - p * (bot - top);
+    ctx.lineWidth = 1; ctx.strokeStyle = C.line; ctx.fillStyle = C.muted; ctx.font = `500 ${fsz(w, 10)}px ${FONT}`; ctx.textAlign = 'right';
+    [0, 0.5, 1].forEach(q => { ctx.beginPath(); ctx.moveTo(l, Y(q)); ctx.lineTo(r, Y(q)); ctx.stroke(); ctx.fillText(Math.round(q * 100) + '%', l - 4, Y(q) + 4); });
+    ctx.textAlign = 'left'; ctx.fillStyle = C.ink2; ctx.font = `700 ${fsz(w, 11)}px ${FONT}`; ctx.fillText('右の箱にいる確率', l, top - 6);
+    if (task().goal === 'H') { ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = C.ok; ctx.beginPath(); ctx.moveTo(l, Y(0.5)); ctx.lineTo(r, Y(0.5)); ctx.stroke(); ctx.restore(); }
+    if (run) {
+      const kmax = prog == null ? N : kOf(prog * T);
+      ctx.strokeStyle = C.e; ctx.lineWidth = 2.5; ctx.beginPath();
+      for (let k = 0; k <= kmax; k += 2) { const x = X(k / N * T), y = Y(run.pC[k]); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+      ctx.stroke();
+    }
+    // shots grid
+    const cols = 20, rows = 5, gy0 = h * 0.62, gh = h * 0.3, cw = Math.min((r - l) / cols, gh / rows), gx0 = l;
+    ctx.fillStyle = C.ink2; ctx.font = `700 ${fsz(w, 11)}px ${FONT}`; ctx.textAlign = 'left';
+    const nR = shots.slice(0, nShow).filter(Boolean).length;
+    ctx.fillText(nShow ? `センサーで読み出し：右 ${nR} / ${nShow}回` : 'センサーで100回読み出し（判定後）', l, gy0 - 6);
+    for (let k = 0; k < cols * rows; k++) {
+      const x = gx0 + (k % cols) * cw, y = gy0 + Math.floor(k / cols) * cw;
+      ctx.fillStyle = k < nShow ? (shots[k] ? C.e : hexA(C.spin, 0.55)) : C.sub;
+      rrect(ctx, x + 1.5, y + 1.5, cw - 3, cw - 3, 3); ctx.fill();
+    }
+  }
+  function frame() {
+    const now = performance.now();
+    let prog = null, nShow = state === 'done' ? shots.length : 0;
+    if (state === 'play') {
+      prog = clamp((now - t0) / PLAY_MS, 0, 1);
+      if (prog >= 1) { state = 'shots'; t0 = now; shots = Array.from({ length: 100 }, () => Math.random() < run.final); prog = null; }
+    }
+    if (state === 'shots') {
+      nShow = Math.min(100, Math.floor((now - t0) / SHOT_MS * 100));
+      if (Math.floor(nShow / 4) > shotSnd) { shotSnd = Math.floor(nShow / 4); sfx.play('shot', shots[nShow - 1] ? 1 : 0); }
+      if (nShow >= 100) finish();
+    }
+    drawPulse(prog); drawLevels(prog); drawShots(prog, nShow);
+  }
+  return {
+    enter() { reset(false); },
+    leave() { token++; drawing = false; if (state === 'play' || state === 'shots') reset(true); },
+    frame,
+    key(e) { if (e.code === 'Space' || e.code === 'Enter') { judge(); return true; } return false; }
+  };
+})();
+
+/* ============ explanation dialog, navigation, loop ============ */
+const dlg = $('#explain');
+function openExplain(key) {
+  $('#exBody').innerHTML = $('#tpl' + key).innerHTML;
+  if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', '');
+  $('#exBody').scrollTop = 0;
+}
+$('#exClose').addEventListener('click', () => dlg.close());
+dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-go]');
+  if (b) { e.preventDefault(); sfx.play('tap'); go(b.dataset.go); }
+});
+document.addEventListener('keydown', e => {
+  if (result.isOpen) { if (e.key === 'Escape' && !dlg.open) result.close(); return; }
+  if (e.repeat || dlg.open) return;
+  const g = games[current]; if (!g || !g.key) return;
+  if (e.target.closest && e.target.closest('summary, .levels, [data-go], #aExplain, #bExplain, #cExplain, #dExplain, .pill, .nstep, a')) return;
+  if (g.key(e)) e.preventDefault();
+});
+
+readColors();
+try {
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readColors);
+  new MutationObserver(readColors).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class', 'style'] });
+} catch (e) { /* older browsers */ }
+['A', 'B', 'C', 'D'].forEach(k => setUnlock(k, !!store.get('unlock' + k, false)));
+prog.render();
+
+/* sound toggle, audio unlock, staff reset */
+const sndBtn = $('#sndBtn');
+const syncSnd = () => sndBtn.setAttribute('aria-pressed', sfx.muted ? 'false' : 'true');
+sndBtn.addEventListener('click', () => { sfx.setMuted(!sfx.muted); syncSnd(); sfx.play('tap'); });
+syncSnd();
+document.addEventListener('pointerdown', () => sfx.unlock(), { passive: true });
+document.addEventListener('keydown', () => sfx.unlock());
+document.addEventListener('visibilitychange', () => { if (document.hidden) sfx.hum(0); });
+const resetBtn = $('#resetAll'); let resetArm = 0;
+resetBtn.addEventListener('click', () => {
+  const label = '記録をリセット（スタッフ用）';
+  if (Date.now() - resetArm > 3000) {
+    resetArm = Date.now(); resetBtn.textContent = '本当に消しますか？ もう一度押すと消えます';
+    setTimeout(() => { if (resetArm && Date.now() - resetArm >= 2900) { resetArm = 0; resetBtn.textContent = label; } }, 3000);
+    return;
+  }
+  try { Object.keys(localStorage).filter(k => k.indexOf('qlab:') === 0 && k !== 'qlab:mute').forEach(k => localStorage.removeItem(k)); } catch (e) { /* storage unavailable */ }
+  ['A', 'B', 'C', 'D'].forEach(k => setUnlock(k, false)); prog.render();
+  resetArm = 0; resetBtn.textContent = '記録を消しました';
+  setTimeout(() => { resetBtn.textContent = label; }, 2500);
+});
+
+let lastTs = 0;
+function loop(ts) {
+  const dt = lastTs ? Math.min(0.05, Math.max(0, (ts - lastTs) / 1000)) : 0;
+  lastTs = ts;
+  const g = games[current];
+  if (g && g.frame) { try { g.frame(dt); } catch (err) { console.error(err); } }
+  try { fx.frame(dt); } catch (err) { console.error(err); }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
